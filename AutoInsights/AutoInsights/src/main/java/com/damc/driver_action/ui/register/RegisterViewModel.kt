@@ -44,7 +44,7 @@ class RegisterViewModel(val dataBase: LocalRepostories) : BaseViewModel() {
         } else {
             users = Users(username, password)
             addUerToDb(users)// can use hashing for store password securely
-            showToast("Successfully Registerer", context)
+            showToast("Successfully Registered", context)
             registerToLogin()
         }
     }

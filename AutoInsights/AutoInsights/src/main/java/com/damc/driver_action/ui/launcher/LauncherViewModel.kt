@@ -12,7 +12,7 @@ import com.damc.driver_action.utils.Utils
 import com.damc.driver_action.utils.Utils.Companion.showToast
 import kotlinx.coroutines.launch
 
-class LauncherViewModel(val database: LocalRepostories) : BaseViewModel() {
+class LauncherViewModel(private val database: LocalRepostories) : BaseViewModel() {
 
     fun loginToRegister() {
         navigate(LauncherFragmentDirections.actionLoginToRegister())
@@ -22,7 +22,6 @@ class LauncherViewModel(val database: LocalRepostories) : BaseViewModel() {
         navigate(LauncherFragmentDirections.actionLoginToHome())
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun isUserDetailsOk(
         username: String,
         password: String,
@@ -52,7 +51,6 @@ class LauncherViewModel(val database: LocalRepostories) : BaseViewModel() {
         return user != null
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun validateInputs(
         username: String,
         password: String,
@@ -63,7 +61,7 @@ class LauncherViewModel(val database: LocalRepostories) : BaseViewModel() {
             if (username.isEmpty() || password.isEmpty()) {
                 showToast("Fields cannot be empty", context)
             } else if (isUserDetailsOk(username, password, application)) {
-                showToast("Login Successful", context)
+                //showToast("Login Successful", context)
                 loginToHome()
             } else {
                 showToast("Invalid Credentials", context)

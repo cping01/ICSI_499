@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/purple_700"
+    android:background="@color/purple_500"
     android:layout_height="wrap_content">
 
     <LinearLayout
@@ -38,7 +38,7 @@
                 android:layout_weight="1"
                 android:layout_marginLeft="10dp"
                 android:gravity="left"
-                android:text="Highest Speed">
+                android:text="Top Speed">
             </TextView>
 
             <TextView

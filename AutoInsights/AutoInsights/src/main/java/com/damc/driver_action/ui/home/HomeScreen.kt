@@ -257,10 +257,10 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                 getPendingIntent()
             )
             .addOnSuccessListener {
-                showToast("successful registration")
+                //showToast("successful registration")
             }
             .addOnFailureListener {
-                showToast("Unsuccessful registration")
+                //showToast("Unsuccessful registration")
             }
     }
 
