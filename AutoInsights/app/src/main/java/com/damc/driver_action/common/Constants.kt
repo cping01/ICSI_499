@@ -1,0 +1,12 @@
+package com.damc.driver_action.common
+
+object Constants {
+    const val REQUEST_CODE_ACTIVITY_TRANSITION = 123
+    const val REQUEST_CODE_INTENT_ACTIVITY_TRANSITION = 122
+    const val ACTIVITY_TRANSITION_NOTIFICATION_ID = 111
+    const val ACTIVITY_TRANSITION_STORAGE = "ACTIVITY_TRANSITION_STORAGE"
+    const val REQUEST_LOCATION_PERMISSION = 234
+    const val FAST_ACCELARATION = 5.0f
+    const val MEDIUM_ACCELARATION = 3.0f
+    const val GOOD_ACCELARATION = 1.0f
+}
