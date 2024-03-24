@@ -149,10 +149,10 @@ class SummeryAdapter(private var summerData: List<ActionData>) :
         file = if (VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                    .toString() + "/DriverAction"
+                    .toString() + "/AutoInsights"
             )
         } else {
-            File(Environment.getExternalStorageDirectory().toString() + "/DriverAction")
+            File(Environment.getExternalStorageDirectory().toString() + "/AutoInsights")
         }
         if (!file.exists()) {
             try {
@@ -173,12 +173,12 @@ class SummeryAdapter(private var summerData: List<ActionData>) :
                 fileNew =
                     File(
                         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                            .toString() + "/DriverAction/" + currentDate + ".txt"
+                            .toString() + "/AutoInsights/" + currentDate + ".txt"
                     )
             } else {
                 fileNew = File(
                     Environment.getExternalStorageDirectory()
-                        .toString() + "/DriverAction/" + currentDate + ".txt"
+                        .toString() + "/AutoInsights/" + currentDate + ".txt"
                 )
             }
 
@@ -198,7 +198,7 @@ class SummeryAdapter(private var summerData: List<ActionData>) :
                 e.printStackTrace()
             }
 
-            showToast("File Save Successfully", context)
+            showToast("File Saved Successfully", context)
         }
 
 
