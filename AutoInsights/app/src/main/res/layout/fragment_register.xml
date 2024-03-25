@@ -19,7 +19,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:padding="16dp"
-        android:background="@color/purple_700"
+        android:background="@drawable/login_background"
         android:layout_height="match_parent">
 
         <com.google.android.material.textfield.TextInputLayout
@@ -29,14 +29,14 @@
             android:layout_marginTop="150dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            android:background="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_username"
                 android:layout_width="match_parent"
-                android:background="@color/white"
+                android:fontFamily="@font/rowdies_l"
+                android:background="@drawable/rounded_layout"
                 android:layout_height="wrap_content"
                 android:hint="Username" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -49,7 +49,6 @@
             app:passwordToggleEnabled="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            android:background="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout4">
 
@@ -57,8 +56,8 @@
                 android:id="@+id/et_password_confirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:inputType="textPassword"
+                android:fontFamily="@font/rowdies_l"
+                android:background="@drawable/rounded_layout"                android:inputType="textPassword"
                 android:hint="Confirm Password" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -66,8 +65,12 @@
             android:id="@+id/bt_loging"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Register"
+            android:layout_marginTop="30dp"
+            android:padding="14dp"
+            android:text="Continue"
+            android:textSize="15sp"
+            android:fontFamily="@font/rowdies_l"
+            android:background="@drawable/rounded_layout"
             android:onClick="@{fragment.onClickRegister}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -78,10 +81,11 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/rowdies_b"
             android:text="AutoInsights"
             android:textColor="@color/white"
-            android:textSize="30dp"
+            android:textSize="50sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
@@ -92,15 +96,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_email"
-                android:background="@color/white"
-                android:layout_width="match_parent"
+                android:fontFamily="@font/rowdies_l"
+                android:background="@drawable/rounded_layout"                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -112,15 +115,14 @@
             android:layout_marginTop="10dp"
             app:passwordToggleEnabled="true"
             app:layout_constraintEnd_toEndOf="parent"
-            android:background="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout3">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_password"
                 android:layout_width="match_parent"
-                android:background="@color/white"
-                android:layout_height="wrap_content"
+                android:fontFamily="@font/rowdies_l"
+                android:background="@drawable/rounded_layout"                android:layout_height="wrap_content"
                 android:hint="Password"
                 android:inputType="textPassword"/>
         </com.google.android.material.textfield.TextInputLayout>
@@ -129,9 +131,10 @@
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:textColor="@color/white"
-            android:text="If you already have an account?"
+            android:text="Already have an account?"
+            android:fontFamily="@font/rowdies_l"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/bt_loging" />
@@ -140,8 +143,9 @@
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="0dp"
             android:text="Login"
+            android:fontFamily="@font/rowdies_l"
             android:onClick="@{fragment.onClickLogin}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
