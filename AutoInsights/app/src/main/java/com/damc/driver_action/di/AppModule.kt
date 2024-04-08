@@ -2,10 +2,12 @@ package com.damc.driver_action.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.damc.driver_action.TripManager.TripManager
 import com.damc.driver_action.accelerationHelper.Accelerometer
 import com.damc.driver_action.accelerationHelper.Gyroscope
 import com.damc.driver_action.data.local.LocalRepositoryImpl
 import com.damc.driver_action.data.local.PreferenceRepositoryImpl
+import com.damc.driver_action.data.local.location.GPSProcess
 import com.damc.driver_action.data.local.room.DatabaseClient
 import com.damc.driver_action.data.local.room.OnDataBaseActions
 import com.damc.driver_action.domain.LocalRepostories
@@ -26,6 +28,9 @@ val appModule: Module = module {
     single<SharedPreferences> {
         androidContext().getSharedPreferences("com.damc.driver", Context.MODE_PRIVATE)
     }
+
+    single { TripManager(get(), get()) } // Assuming your TripManager needs context and fusedLocationProviderClient
+    single { GPSProcess() }
 
 
     single<OnDataBaseActions> {
