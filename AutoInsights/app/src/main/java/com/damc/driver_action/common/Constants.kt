@@ -6,7 +6,7 @@ object Constants {
     const val ACTIVITY_TRANSITION_NOTIFICATION_ID = 111
     const val ACTIVITY_TRANSITION_STORAGE = "ACTIVITY_TRANSITION_STORAGE"
     const val REQUEST_LOCATION_PERMISSION = 234
-    const val FAST_ACCELARATION = 5.0f
-    const val MEDIUM_ACCELARATION = 3.0f
-    const val GOOD_ACCELARATION = 1.0f
+    const val FAST_ACCELARATION = 50.0f
+    const val MEDIUM_ACCELARATION = 30.0f
+    const val GOOD_ACCELARATION = 10.0f
 }

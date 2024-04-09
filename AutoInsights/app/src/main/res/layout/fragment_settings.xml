@@ -19,7 +19,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/purple_700">
+        android:background="#762cb0">
 
         <TextView
             android:id="@+id/textView3"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:text="Settings"
-            android:textColor="@color/white"
+            android:textColor="#f5be18"
             android:textSize="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
@@ -60,8 +60,8 @@
                 android:id="@+id/cb_driver_tracking"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Disable Driver Trcking"
-                android:layout_gravity="clip_vertical">
+                android:layout_gravity="clip_vertical"
+                android:text="Disable Driver Tracking">
 
             </CheckBox>
 

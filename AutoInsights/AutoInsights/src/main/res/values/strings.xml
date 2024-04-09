@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DriverActivity</string>
+    <string name="app_name">AutoInsights</string>
 
     <string name="activity_in_vehicle">In Vehicle</string>
     <string name="activity_on_bicycle">On Bicycle</string>

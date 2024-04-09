@@ -7,7 +7,7 @@ import com.damc.driver_action.domain.models.Users
 
 @Database(
     entities = [Users::class, ActionData::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDataBase : RoomDatabase() {

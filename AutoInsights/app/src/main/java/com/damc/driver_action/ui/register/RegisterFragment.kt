@@ -28,16 +28,17 @@ class RegisterFragment : BaseFragment<FragmentRegisterBinding, RegisterViewModel
 
     fun onClickRegister(view: View) {
         GlobalScope.launch {
-            viewModel.validateFields(
-                binding.etUsername.text.toString(),
-                binding.etEmail.text.toString(),
-                binding.etPassword.text.toString(),
-                binding.etPasswordConfirm.text.toString(), requireContext()
-            )
+            if (viewModel.validateFields(
+                    binding.etUsername.text.toString(),
+                    binding.etEmail.text.toString(),
+                    binding.etPassword.text.toString(),
+                    binding.etPasswordConfirm.text.toString(), requireContext()
+                )
+            ) {
+
+            }
         }
-
     }
-
 
 
 }

@@ -30,6 +30,8 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, SettingsViewModel
 
         binding.cbBiometrics.isChecked = viewModel.users.biometricsEnabled
 
+        binding.cbDriverTracking.isChecked = !viewModel.users.autoTrackingEnabled
+
         binding.cbBiometrics.setOnCheckedChangeListener { compoundButton, b ->
             if (Utils.isBiometricReady(requireContext())) {
                 viewModel.users.biometricsEnabled = b
@@ -40,6 +42,13 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, SettingsViewModel
                 showToast("Device not Support Biometrics", requireContext())
                 binding.cbBiometrics.isChecked = false
             }
+        }
+
+        binding.cbDriverTracking.setOnCheckedChangeListener{
+            comb, b ->
+            viewModel.users.autoTrackingEnabled = !b
+            (requireActivity().application as AssignmentApplication).setLoginUser(viewModel.users)
+            viewModel.upDateUser(viewModel.users)
         }
     }
 

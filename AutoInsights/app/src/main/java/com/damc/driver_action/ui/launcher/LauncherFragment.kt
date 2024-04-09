@@ -70,13 +70,16 @@ class LauncherFragment : BaseFragment<FragmentLauncherBinding, LauncherViewModel
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onClickLogin(view: View) {
-        viewModel.validateInputs(
-            binding.etUsername.text.toString(),
-            binding.etPassword.text.toString(),
-            requireContext(),
-            false,
-            requireActivity().application as AssignmentApplication
-        )
+        if (viewModel.validateInputs(
+                binding.etUsername.text.toString(),
+                binding.etPassword.text.toString(),
+                requireContext(),
+                false,
+                requireActivity().application as AssignmentApplication
+            )
+        ) {
+            binding.etPassword.setText("")
+        }
     }
 
     fun setUsername() {
@@ -91,13 +94,16 @@ class LauncherFragment : BaseFragment<FragmentLauncherBinding, LauncherViewModel
     }
 
     override fun onBiometricAuthenticateSuccess(result: androidx.biometric.BiometricPrompt.AuthenticationResult) {
-        viewModel.validateInputs(
-            binding.etUsername.text.toString(),
-            binding.etPassword.text.toString(),
-            requireContext(),
-            true,
-            requireActivity().application as AssignmentApplication
-        )
+        if (viewModel.validateInputs(
+                binding.etUsername.text.toString(),
+                binding.etPassword.text.toString(),
+                requireContext(),
+                true,
+                requireActivity().application as AssignmentApplication
+            )
+        ) {
+            binding.etPassword.setText("")
+        }
     }
 
 
