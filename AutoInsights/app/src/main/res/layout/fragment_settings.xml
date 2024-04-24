@@ -62,17 +62,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/rounded_layout"
+            android:backgroundTint="#762cb0"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+            android:padding="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+            tools:layout_editor_absoluteX="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:background="@drawable/rounded_layout"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <CheckBox
                     android:id="@+id/cb_biometrics"
@@ -93,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_layout"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <CheckBox
                     android:id="@+id/cb_driver_tracking"
@@ -101,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="clip_vertical"
                     android:fontFamily="@font/rowdies_l"
-                    android:text="Disable Drive Tracking"
+                    android:text="Disable Auto Drive Tracking"
                     android:textColor="#404040">
 
                 </CheckBox>

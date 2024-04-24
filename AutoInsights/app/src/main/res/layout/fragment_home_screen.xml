@@ -140,6 +140,7 @@
                     android:id="@+id/ll_driver_data"
                     android:layout_width="match_parent"
                     android:layout_height="340dp"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/rounded_layout"
                     android:backgroundTint="#762cb0"
                     android:orientation="vertical">
@@ -286,7 +287,6 @@
                     android:id="@+id/bt_rider"
                     android:layout_width="match_parent"
                     android:layout_height="75dp"
-                    android:layout_marginTop="10dp"
                     android:fontFamily="@font/rowdies_l"
                     android:onClick="@{fragment.onClickSummery}"
                     android:text="Start Ride"

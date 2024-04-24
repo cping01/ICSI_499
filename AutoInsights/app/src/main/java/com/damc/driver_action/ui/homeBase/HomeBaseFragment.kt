@@ -8,7 +8,7 @@ import com.damc.driver_action.databinding.FragmentHomeBaseBinding
 import com.damc.driver_action.ui.BaseFragment
 import com.damc.driver_action.ui.homeBase.home.HomeScreen
 import com.damc.driver_action.ui.homeBase.settings.SettingsFragment
-import com.damc.driver_action.ui.homeBase.summerScreen.SummeryFragment
+import com.damc.driver_action.ui.homeBase.summaryScreen.SummaryFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
@@ -41,7 +41,7 @@ class HomeBaseFragment : BaseFragment<FragmentHomeBaseBinding, HomeBaseViewModel
             }
 
             R.id.it_summery -> {
-                setCurrentFragment(SummeryFragment.newInstance())
+                setCurrentFragment(SummaryFragment.newInstance())
                 return true
             }
 
