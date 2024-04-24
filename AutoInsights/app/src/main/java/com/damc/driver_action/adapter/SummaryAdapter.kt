@@ -21,21 +21,24 @@ import java.io.File
 import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
-class SummeryAdapter(private var summerData: List<ActionData>) :
-    RecyclerView.Adapter<SummeryAdapter.ViewHolder>() {
+class SummaryAdapter(private var summerData: List<ActionData>) :
+    RecyclerView.Adapter<SummaryAdapter.ViewHolder>() {
 
     var isShowMore = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SummeryAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SummaryAdapter.ViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.summery_adapter, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.summary_adapter, parent, false)
         return ViewHolder(view)
     }
 
 
-    override fun onBindViewHolder(holder: SummeryAdapter.ViewHolder, position: Int) {
-        holder.tvDate.text = summerData[position].date
+    override fun onBindViewHolder(holder: SummaryAdapter.ViewHolder, position: Int) {
+        holder.tvDate.text = android.icu.text.SimpleDateFormat("E MMM dd, yyyy", Locale.US)
+            .format(Date())
         holder.tvHgSpeed.text = "${"%.1f".format(summerData[position].highestSpeed)} m/s"
         holder.tvHstop.text = summerData[position].hardStopCount.toString()
         holder.tvFA.text = summerData[position].fastAcceleration.toString()

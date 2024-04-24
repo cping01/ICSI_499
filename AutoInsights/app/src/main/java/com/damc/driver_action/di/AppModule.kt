@@ -13,7 +13,7 @@ import com.damc.driver_action.domain.PreferenceRepository
 import com.damc.driver_action.ui.homeBase.HomeBaseViewModel
 import com.damc.driver_action.ui.homeBase.home.HomeScreenViewModel
 import com.damc.driver_action.ui.homeBase.settings.SettingsViewModel
-import com.damc.driver_action.ui.homeBase.summerScreen.SummeryViewModel
+import com.damc.driver_action.ui.homeBase.summaryScreen.SummaryViewModel
 import com.damc.driver_action.ui.launcher.LauncherViewModel
 import com.damc.driver_action.ui.register.RegisterViewModel
 import org.koin.android.ext.koin.androidContext
@@ -51,7 +51,7 @@ val appModule: Module = module {
     viewModel { LauncherViewModel(get(), get()) }
     viewModel { RegisterViewModel(get(), get()) }
     viewModel { HomeScreenViewModel(get(), get()) }
-    viewModel { SummeryViewModel(get()) }
+    viewModel { SummaryViewModel(get()) }
     viewModel { HomeBaseViewModel() }
     viewModel { SettingsViewModel(get(), get()) }
 }
