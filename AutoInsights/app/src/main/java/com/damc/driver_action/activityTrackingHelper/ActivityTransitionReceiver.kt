@@ -44,7 +44,7 @@ open class ActivityTransitionReceiver() :
                             } "
                         }
                         .show(id = Constants.ACTIVITY_TRANSITION_NOTIFICATION_ID)
-                    Toast.makeText(context, info, Toast.LENGTH_LONG).show()
+                    //Toast.makeText(context, info, Toast.LENGTH_LONG).show()
                 }
             }
         }

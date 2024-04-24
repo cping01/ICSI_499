@@ -328,10 +328,10 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                 getPendingIntent()
             )
             .addOnSuccessListener {
-                showToast("Activity Tracking Started")
+                //showToast("Activity Tracking Started")
             }
             .addOnFailureListener {
-                showToast("Activity Tracking Failed")
+                //showToast("Activity Tracking Failed")
             }
     }
 
