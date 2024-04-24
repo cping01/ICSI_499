@@ -78,14 +78,17 @@
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
 
         <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/rowdies_b"
+            android:id="@+id/im_logo"
+            android:layout_width="333dp"
+            android:layout_height="67dp"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/fava"
+            android:shadowColor="#DF000000"
+            android:shadowRadius="20"
             android:text="AutoInsights"
             android:textColor="#f5be18"
             android:textSize="50sp"
+            android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
