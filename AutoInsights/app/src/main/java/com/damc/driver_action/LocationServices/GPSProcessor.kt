@@ -1,14 +1,17 @@
+package com.damc.driver_action.LocationServices
+import android.content.Context
+import com.damc.driver_action.data.local.room.DatabaseClient
 import kotlin.math.*
-import java.io.File
+
 import kotlin.Pair
-import java.text.SimpleDateFormat
+
 import java.util.*
 import com.damc.driver_action.domain.models.TripMetrics
 import com.damc.driver_action.data.local.room.OnDataBaseActions
 
 class GPSProcessor(private val points: List<GPSPoint>) {
 
-    data class GPSPoint(val latitude: Double, val longitude: Double, val timestamp: Long)
+
 
     data class Region(val name: String, val center: GPSPoint, val radius: Double)
 
@@ -137,7 +140,7 @@ class GPSProcessor(private val points: List<GPSPoint>) {
         return GPSPoint(avgLat, avgLon, points[0].timestamp) // Use timestamp from any point
     }
 
-    fun processGPSPoints(): List<GPSPoint> {
+    fun processGPSPoints( points: List<GPSPoint>): List<GPSPoint> {
         var lastInferenceTime = System.currentTimeMillis()
         val recentPoints = mutableListOf<GPSPoint>()
         val reInferenceInterval = 5 * 60 * 1000
@@ -235,25 +238,25 @@ class GPSProcessor(private val points: List<GPSPoint>) {
     }
 
 
-    fun ProcessTrajectory(fileName: String, numRowsToSkip: Int): ArrayList<String> {
-        val lines = ArrayList<String>()
-        val file = File(fileName)
-        var count = 0
+//    fun ProcessTrajectory(fileName: String, numRowsToSkip: Int): ArrayList<String> {
+//        val lines = ArrayList<String>()
+//        val file = File(fileName)
+//        var count = 0
+//
+//        file.forEachLine { line ->
+//            if (count >= numRowsToSkip) {
+//                val Data = line.split(",")
+//                val timestamp = Data[4] + " " + Data[5]
+//                val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+//                val date =  dateFormat.parse(timestamp)
+//                val GPSPoint = GPSPoint(Data[0].toDouble(), Data[1].toDouble(), date)
+//                lines.add(line)
+//            }
+//            count++
+//        }
 
-        file.forEachLine { line ->
-            if (count >= numRowsToSkip) {
-                val Data = line.split(",")
-                val timestamp = Data[4] + " " + Data[5]
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                val date = dateFormat.parse(timestamp)
-                val GPSPoint = GPSPoint(Data[0].toDouble(), Data[1].toDouble(), date)
-                lines.add(line)
-            }
-            count++
-        }
-
-        return lines
-    }
+//        return lines
+//    }
 
     fun CalculateSegment(projectedTrajectory: List<GPSPoint>): List<Pair<Double, Long>> {
         val segments = mutableListOf<Pair<Double, Long>>()
@@ -353,23 +356,42 @@ class GPSProcessor(private val points: List<GPSPoint>) {
         val hardBrakingInstances: Int
     )
 
-    fun calculateAllMetrics(): TripSummary {
+    fun tripSummaryToTripMetrics(tripSummary: GPSProcessor.TripSummary): TripMetrics {
+        return TripMetrics(
+            // Fill in the properties here. For example:
+            maxSpeed = tripSummary.maxSpeed,
+            averageSpeed = tripSummary.averageSpeed,
+            tripDuration = tripSummary.tripDuration,
+            tripDistance = tripSummary.tripDistance,
+            speedingInstances = tripSummary.speedingInstances,
+            hardAccelerationInstances = tripSummary.hardAccelerationInstances,
+            hardBrakingInstances = tripSummary.hardBrakingInstances
+            // Add the rest of the properties here
+        )
+    }
+
+    suspend fun calculateAllMetrics(context: Context): TripSummary {
         val differences = projectTrajectoryPrivacy(points)
         val projectedTrajectory = processGPSPoints(differences)
         val segments = CalculateSegment(projectedTrajectory)
         val metrics = calculateMetrics(segments)
-        OnDataBaseActions.databaseActions.insertTripMetrics(metrics)
+        val tripMetrics = tripSummaryToTripMetrics(metrics)
+        val databaseClient = DatabaseClient(context)
+        val appDatabase = databaseClient.getAppDatabase()
+        val onDataBaseActions = appDatabase?.OnDataBaseActions()
+        onDataBaseActions?.insertTripMetrics(tripMetrics)
+
         return metrics
     }
 
-    fun main() {
-        val points = listOf(
-            // pull list of gps data
-        )
-        val processor = GPSProcessor(points)
-        val metrics = processor.calculateAllMetrics()
-        // store 'metrics' in database
-    }
+//    fun main() {
+//        val points = listOf(
+//            // pull list of gps data
+//        )
+//        val processor = com.damc.driver_action.LocationServices.GPSProcessor(points)
+//        val metrics = processor.calculateAllMetrics()
+//        // store 'metrics' in database
+//    }
 
 
 //    fun main() {
@@ -525,3 +547,4 @@ class GPSProcessor(private val points: List<GPSPoint>) {
 // }
 
 }
+
