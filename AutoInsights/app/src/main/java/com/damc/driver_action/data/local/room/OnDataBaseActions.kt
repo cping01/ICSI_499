@@ -6,11 +6,16 @@ import androidx.room.Query
 import androidx.room.Update
 import com.damc.driver_action.domain.models.ActionData
 import com.damc.driver_action.domain.models.Users
+import com.damc.driver_action.domain.models.TripMetrics
 
 @Dao
 interface OnDataBaseActions {
     @Insert
     suspend fun insertUser(users: Users)
+
+    @Insert
+    suspend fun insertTripMetrics(tripMetrics: TripMetrics)
+
 
     @Query("SELECT COUNT(*) FROM users WHERE username LIKE :username LIMIT 1")
     fun isUsernameInDb(username: String): Int
