@@ -18,9 +18,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:padding="16dp"
+        android:layout_height="match_parent"
         android:background="@drawable/login_background"
-        android:layout_height="match_parent">
+        android:padding="16dp">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayout"
@@ -34,11 +34,12 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_username"
-                android:fontFamily="@font/rowdies_l"
-                android:background="@drawable/rounded_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rounded_layout"
+                android:fontFamily="@font/rowdies_l"
                 android:hint="Username" />
+
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -46,33 +47,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            app:passwordToggleEnabled="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
+            app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_password"
-                android:fontFamily="@font/rowdies_l"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_layout"
-                android:inputType="textPassword"
-                android:hint="Password" />
+                android:fontFamily="@font/rowdies_l"
+                android:hint="Password"
+                android:inputType="textPassword" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
 
 
         <Button
             android:id="@+id/bt_loging"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Login"
+            android:layout_marginTop="30dp"
             android:fontFamily="@font/rowdies_l"
             android:onClick="@{fragment.onClickLogin}"
-            android:layout_marginTop="30dp"
             android:padding="16dp"
+            android:text="Login"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
@@ -82,8 +82,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Don't have an account?"
             android:fontFamily="@font/rowdies_l"
+            android:text="Don't have an account?"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -93,10 +93,10 @@
             android:id="@+id/bt_register"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Register"
+            android:layout_marginTop="10dp"
             android:fontFamily="@font/rowdies_l"
             android:onClick="@{fragment.onClickRegister}"
-            android:layout_marginTop="10dp"
+            android:text="Register"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -108,7 +108,7 @@
             android:layout_marginTop="30dp"
             android:fontFamily="@font/rowdies_b"
             android:text="AutoInsights"
-            android:textColor="@color/white"
+            android:textColor="#f5be18"
             android:textSize="50sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
@@ -116,25 +116,29 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/ic_account_circle"
-            app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-        <ImageView
             android:id="@+id/im_biometrics"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_weight="1"
-            android:tint="@color/white"
             android:onClick="@{fragment.onClickBiometrics}"
+            android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/bt_register"
             app:srcCompat="@drawable/ic_biometrcis"
             tools:layout_editor_absoluteX="16dp" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="134dp"
+            android:layout_height="95dp"
+            app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3"
+            app:layout_constraintVertical_bias="0.379"
+            app:srcCompat="@drawable/secondary_split_a_2020_rgb" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -2,15 +2,15 @@
     <!-- Base application theme. -->
     <style name="Theme.DriverActivityTracker" parent="Theme.Material3.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/yellow</item>
-        <item name="colorPrimaryVariant">@color/yellow_700</item>
-        <item name="colorOnPrimary">@color/purple_700</item>
+        <item name="colorPrimary">#f5be18</item>
+        <item name="colorPrimaryVariant">#f5be18</item>
+        <item name="colorOnPrimary">#762cb0</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/yellow</item>
-        <item name="colorSecondaryVariant">@color/yellow_700</item>
-        <item name="colorOnSecondary">@color/purple_700</item>
+        <item name="colorSecondary">#f5be18</item>
+        <item name="colorSecondaryVariant">#f5be18</item>
+        <item name="colorOnSecondary">#762cb0</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">#762cb0</item>
         <!-- Customize your theme here. -->
     </style>
 </resources>

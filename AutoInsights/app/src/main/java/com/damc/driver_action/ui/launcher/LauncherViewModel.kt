@@ -75,7 +75,8 @@ class LauncherViewModel(
         context: Context,
         biometrics: Boolean,
         application: AssignmentApplication
-    ) {
+    ): Boolean {
+        var b = false
         viewModelScope.launch {
             if (!biometrics) {
                 if (username.isEmpty() || password.isEmpty()) {
@@ -88,9 +89,10 @@ class LauncherViewModel(
                     showToast("Invalid Credentials", context)
                 }
             } else {
-                if (username.isEmpty() ) {
+                if (username.isEmpty()) {
                     showToast("Username cannot be empty", context)
                 } else if (isUserDetailsOk(username, password, biometrics, application)) {
+                    b = true
                     showToast("Login Successful", context)
                     preferenceRepository.saveUsername(username)
                     loginToHome()
@@ -100,6 +102,8 @@ class LauncherViewModel(
             }
 
         }
+
+        return b
     }
 
 }

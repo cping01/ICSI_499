@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
@@ -18,10 +19,12 @@ import com.damc.driver_action.R
 import com.damc.driver_action.accelerationHelper.Accelerometer
 import com.damc.driver_action.activityTrackingHelper.ActivityTransitionReceiver
 import com.damc.driver_action.activityTrackingHelper.ActivityTransitionsUtil
+import com.damc.driver_action.activityTrackingHelper.OnActivityReceived
 import com.damc.driver_action.app.AssignmentApplication
 import com.damc.driver_action.common.Constants
 import com.damc.driver_action.common.Constants.REQUEST_CODE_ACTIVITY_TRANSITION
 import com.damc.driver_action.databinding.FragmentHomeScreenBinding
+import com.damc.driver_action.domain.models.Users
 import com.damc.driver_action.ui.BaseFragment
 import com.damc.driver_action.utils.Utils
 import com.damc.driver_action.velocityHelper.CLocation
@@ -37,7 +40,7 @@ import java.util.Locale
 
 
 class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(),
-    EasyPermissions.PermissionCallbacks, IBaseGpsListener {
+    EasyPermissions.PermissionCallbacks, IBaseGpsListener, OnActivityReceived {
 
     val TAG = HomeScreen::class.java.simpleName
 
@@ -51,6 +54,26 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         fun newInstance() = HomeScreen()
     }
 
+//    private val activityTransitionReceiver = object : BroadcastReceiver() {
+//        override fun onReceive(context: Context, intent: Intent) {
+//            if (ActivityTransitionResult.hasResult(intent)) {
+//                val result = ActivityTransitionResult.extractResult(intent)
+//                result?.let {
+//                    result.transitionEvents.forEach { event ->
+//                        val info =
+//                            "Transition: ${ActivityTransitionsUtil.toActivityString(event.activityType)} " +
+//                                    "(${ActivityTransitionsUtil.toTransitionType(event.transitionType)}) " +
+//                                    SimpleDateFormat("HH:mm:ss", Locale.US).format(Date())
+//
+//                        // Do something with the activity transition event
+//                        // For example, display it in a TextView
+////                        textView.append("$info\n")
+//                    }
+//                }
+//            }
+//        }
+//    }
+
 
     override val layoutId: Int
         get() = R.layout.fragment_home_screen
@@ -62,6 +85,8 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         }
 
     override fun onReady(savedInstanceState: Bundle?) {
+
+        viewModel.users = (requireActivity().application as AssignmentApplication).getLoginUser()
 
         viewModel.actionData =
             (requireActivity().application as AssignmentApplication).getActionData()!!
@@ -100,8 +125,10 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
 
                             if (binding.tvUserStatus.text != "IN VEHICLE") {
                                 binding.llDriverData.visibility = View.GONE
+                                viewModel.isStartRide = false
                             } else {
                                 binding.llDriverData.visibility = View.VISIBLE
+                                viewModel.isStartRide = true
                             }
 
 
@@ -122,13 +149,17 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-
-            requestPermissions(
-                arrayOf<String>(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
+            EasyPermissions.requestPermissions(
+                this,
+                "You need to allow Activity Transition Permissions in order to recognize your location",
                 Constants.REQUEST_LOCATION_PERMISSION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            EasyPermissions.requestPermissions(
+                this,
+                "You need to allow Activity Transition Permissions in order to recognize your location",
+                Constants.REQUEST_LOCATION_PERMISSION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
             )
         } else {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
@@ -136,6 +167,32 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         }
 
         setObservers()
+
+        handleAutoTracking(viewModel.users)
+
+
+        val filter = IntentFilter()
+        filter.addAction("com.google.android.gms.location.ACTIVITY_TRANSITION_ACTION")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().registerReceiver(
+                activityTransitionReceiver, filter,
+                Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            requireActivity().registerReceiver(activityTransitionReceiver, filter)
+        }
+    }
+
+    fun handleAutoTracking(user: Users) {
+        if (user.autoTrackingEnabled) {
+            binding.btRider.visibility = View.GONE
+            binding.llDriverData.visibility = View.VISIBLE
+            binding.tvUserStatus.text = "Waiting for google Service"
+        } else {
+            binding.btRider.visibility = View.VISIBLE
+            binding.llDriverData.visibility = View.GONE
+            binding.tvUserStatus.text = "Waiting for google Service"
+        }
     }
 
 
@@ -180,6 +237,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                     viewModel.updateUserData(viewModel.actionData)
                 }
             }
+            viewModel.checkFastAccOrHardStop()
         } catch (e: Exception) {
 
         }
@@ -207,10 +265,10 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
             if (ActivityCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
+                ) == PackageManager.PERMISSION_GRANTED
             ) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
                 this.updateSpeed(null)
@@ -268,10 +326,10 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                 getPendingIntent()
             )
             .addOnSuccessListener {
-                showToast("successful registration")
+                //showToast("Activity Tracking Started")
             }
             .addOnFailureListener {
-                showToast("Unsuccessful registration")
+                showToast("Activity Tracking Failed")
             }
     }
 
@@ -281,8 +339,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                 Manifest.permission.ACTIVITY_RECOGNITION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-
-            return
+            requestActivityTransitionPermission()
         }
         client
             .removeActivityTransitionUpdates(getPendingIntent())
@@ -302,7 +359,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
             requireActivity(),
             Constants.REQUEST_CODE_INTENT_ACTIVITY_TRANSITION,
             intent,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
         )
     }
 
@@ -318,11 +375,14 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
 
 
     private fun requestActivityTransitionPermission() {
-        EasyPermissions.requestPermissions(
-            this,
-            "You need to allow Activity Transition Permissions in order to recognize your activities",
-            Constants.REQUEST_CODE_ACTIVITY_TRANSITION,
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            EasyPermissions.requestPermissions(
+                this,
+                "You need to allow Activity Transition Permissions in order to recognize your activities",
+                Constants.REQUEST_CODE_ACTIVITY_TRANSITION,
+                Manifest.permission.ACTIVITY_RECOGNITION
+            )
+        }
     }
 
     override fun onLocationChangedI(location: Location?) {
@@ -373,6 +433,15 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.updateUserData(viewModel.actionData)
+    }
+
+    override fun OnActivityReceived(result: ActivityTransitionResult?) {
+        println(result)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        requireActivity().unregisterReceiver(activityTransitionReceiver)
     }
 
 

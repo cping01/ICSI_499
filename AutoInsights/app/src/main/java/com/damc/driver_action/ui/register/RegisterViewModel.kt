@@ -36,22 +36,26 @@ class RegisterViewModel(
         password: String,
         confirmPassword: String,
         context: Context
-    ) {
+    ): Boolean {
+        var b = false
         if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             showToast("Fields cannot be empty", context)
         } else if (!Utils.validateEmail(email)) {
             showToast("Invalid email", context)
         } else if (password != confirmPassword) {
-            showToast("Password & Confirm Password should be match", context)
+            showToast("Passwords do not match", context)
         } else if (checkUsernameInDb(username) > 0) {
             showToast("Username already taken", context)
         } else {
-            users = Users(username, password, false)
+            b = true
+            users = Users(username, password, false, true)
             addUerToDb(users)// can use hashing for store password securely
             preferenceRepository.saveUsername(username)
-            showToast("Successfully Registerer", context)
+            showToast("Successfully Registered", context)
             registerToLogin()
         }
+
+        return b
     }
 
     fun showToast(message: String, context: Context) {

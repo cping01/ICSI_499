@@ -57,7 +57,6 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         }
 
     override fun onReady(savedInstanceState: Bundle?) {
-
         viewModel.actionData =
             (requireActivity().application as AssignmentApplication).getActionData()!!
 
@@ -76,11 +75,9 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                 binding.tvAcceleration.text = "${"%.1f".format(acceleration)} m/s*s"
                 viewModel.checkFastAccOrHardStop()
             }
-
         })
 
         setActivityClient()
-
 
         activityTransitionReceiver = object : ActivityTransitionReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -88,10 +85,8 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                     val result = ActivityTransitionResult.extractResult(intent)
                     result?.let {
                         result.transitionEvents.forEach { event ->
-
                             binding.tvUserStatus.text =
                                 ActivityTransitionsUtil.toActivityString(event.activityType)
-
                         }
                     }
                 }
@@ -100,33 +95,35 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
 
         locationManager =
             requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if (ActivityCompat.checkSelfPermission(
+        // Check location permissions at runtime
+        if (EasyPermissions.hasPermissions(
                 requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+            )
         ) {
-            EasyPermissions.requestPermissions(
-                this,
-                "You need to allow Activity Transition Permissions in order to recognize your location",
-                Constants.REQUEST_LOCATION_PERMISSION,
-                Manifest.permission.ACCESS_FINE_LOCATION
+            // Permissions granted, request location updates
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                0,
+                0f,
+                this
             )
+            this.updateSpeed(null)
+        } else {
+            // Request location permissions
             EasyPermissions.requestPermissions(
                 this,
-                "You need to allow Activity Transition Permissions in order to recognize your location",
+                "You need to allow location permissions in order to recognize your location",
                 Constants.REQUEST_LOCATION_PERMISSION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
-        } else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
-            this.updateSpeed(null)
         }
 
         setObservers()
     }
+
 
 
     fun setObservers() {
@@ -192,21 +189,35 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         if (requestCode == REQUEST_CODE_ACTIVITY_TRANSITION) {
             requestForUpdates()
         } else {
-            if (ActivityCompat.checkSelfPermission(
+            // Check if both ACCESS_FINE_LOCATION and ACCESS_COARSE_LOCATION permissions are granted
+            if (EasyPermissions.hasPermissions(
                     requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
+                )
             ) {
-
+                // Permissions granted, request location updates
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    0,
+                    0f,
+                    this
+                )
+                // Retrieve last known location
+                val lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                // Update latitude and longitude
+                lastLocation?.let {
+                    val latitude = it.latitude
+                    val longitude = it.longitude
+                    // Do something with latitude and longitude, like display them
+                    showToast("Latitude: $latitude, Longitude: $longitude")
+                }
+                // Update speed
+                updateSpeed(lastLocation)
             }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
-            this.updateSpeed(null)
         }
-
     }
+
 
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
@@ -318,7 +329,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
     override fun onLocationChangedI(location: Location?) {
         if (location != null) {
             val myLocation = CLocation(location, true)
-            updateSpeed(myLocation)
+            viewModel.updateLocationData(myLocation.latitude, myLocation.longitude)
         }
     }
 
@@ -329,7 +340,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
     override fun onLocationChanged(p0: Location) {
         if (p0 != null) {
             val myLocation = CLocation(p0, true)
-            updateSpeed(myLocation)
+            viewModel.updateLocationData(myLocation.latitude, myLocation.longitude)
         }
     }
 

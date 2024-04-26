@@ -11,7 +11,9 @@ data class Users(
     @ColumnInfo(name = "password")
     var password: String,
     @ColumnInfo(name = "biometrics_enabled")
-    var biometricsEnabled :Boolean
+    var biometricsEnabled: Boolean,
+    @ColumnInfo(name = "auoto_tracking_enabled")
+    var autoTrackingEnabled: Boolean
 ) {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "user_id")

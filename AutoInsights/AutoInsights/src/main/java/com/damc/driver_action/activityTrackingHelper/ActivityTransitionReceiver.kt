@@ -27,11 +27,11 @@ open class ActivityTransitionReceiver : BroadcastReceiver() {
                         .with(context)
                         .content {
                             title = "Activity Detected"
-                            text = "I can see you are in ${
+                            text = "State: ${
                                 ActivityTransitionsUtil.toActivityString(
                                     event.activityType
                                 )
-                            } state"
+                            } "
                         }
                         .show(id = Constants.ACTIVITY_TRANSITION_NOTIFICATION_ID)
                     Toast.makeText(context, info, Toast.LENGTH_LONG).show()

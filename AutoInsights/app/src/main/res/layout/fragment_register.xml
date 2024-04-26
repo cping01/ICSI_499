@@ -84,7 +84,7 @@
             android:layout_marginTop="16dp"
             android:fontFamily="@font/rowdies_b"
             android:text="AutoInsights"
-            android:textColor="@color/white"
+            android:textColor="#f5be18"
             android:textSize="50sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"

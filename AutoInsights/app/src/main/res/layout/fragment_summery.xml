@@ -19,7 +19,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:padding="16dp"
-        android:background="@color/purple_700"
+        android:background="#762cb0"
         android:layout_height="match_parent">
 
 
@@ -29,8 +29,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:text="Summary"
-            android:textColor="@color/white"
-            android:textSize="30dp"
+            android:textColor="#f5be18"
+            android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
