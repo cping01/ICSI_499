@@ -29,6 +29,9 @@ import java.util.Locale
 class SummaryAdapter(private var summerData: List<ActionData>, private var tripMetricsData: List<TripMetrics>, private var tripData: List<Trip>) :
     RecyclerView.Adapter<SummaryAdapter.ViewHolder>() {
 
+    constructor(summerData: List<ActionData>?) : this(summerData ?: emptyList(), emptyList(), emptyList())
+    constructor(tripMetricsData: List<TripMetrics>?, tripData: List<Trip>?) : this(emptyList(), tripMetricsData ?: emptyList(), tripData ?: emptyList())
+
     var isShowMore = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SummaryAdapter.ViewHolder {

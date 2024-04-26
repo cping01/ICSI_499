@@ -1,5 +1,6 @@
 package com.damc.driver_action.domain
 
+import androidx.lifecycle.LiveData
 import com.damc.driver_action.domain.models.ActionData
 import com.damc.driver_action.domain.models.Trip
 import com.damc.driver_action.domain.models.TripMetrics
@@ -7,10 +8,14 @@ import com.damc.driver_action.domain.models.Users
 
 interface LocalRepostories {
 
+    suspend fun getTripMetrics(tripId: Int, userId: Int): LiveData<List<TripMetrics>>
+    fun getTrips( tripId: Int, userId: Int,): LiveData<List<Trip>>
+
     suspend fun insertTrip(trip: Trip): Long
     suspend fun insertTripMetrics(tripMetrics: TripMetrics)
     suspend fun updateTripMetrics(maxSpeed: Double, averageSpeed: Double, tripDuration: Double, tripDistance: Double, speedingInstances: Int, hardAccelerationInstances: Int, hardBrakingInstances: Int, tripId: Int)
-    suspend fun getTripMetrics(tripId: Int): TripMetrics?
+    suspend fun getLatestTrip(): Trip
+
     suspend fun insertUser(users: Users)
 
     suspend fun isUsernameInDb(username: String): Int

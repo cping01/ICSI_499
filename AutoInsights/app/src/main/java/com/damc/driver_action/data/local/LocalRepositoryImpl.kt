@@ -1,5 +1,6 @@
 package com.damc.driver_action.data.local
 
+import androidx.lifecycle.LiveData
 import com.damc.driver_action.data.local.room.OnDataBaseActions
 import com.damc.driver_action.domain.LocalRepostories
 import com.damc.driver_action.domain.models.ActionData
@@ -8,6 +9,7 @@ import com.damc.driver_action.domain.models.TripMetrics
 import com.damc.driver_action.domain.models.Users
 
 class LocalRepositoryImpl(val dataBase: OnDataBaseActions) : LocalRepostories {
+
 
     override suspend fun insertTrip(trip: Trip): Long {
         try {
@@ -36,14 +38,35 @@ class LocalRepositoryImpl(val dataBase: OnDataBaseActions) : LocalRepostories {
         }
     }
 
-    override suspend fun getTripMetrics(tripId: Int): TripMetrics? {
+    override suspend fun getTripMetrics(tripId: Int, userId: Int): LiveData<List<TripMetrics>> {
         try {
-            return dataBase.getTripMetrics(tripId)
+            return dataBase.getTripMetrics(tripId, userId)
         } catch (e: Exception) {
             e.printStackTrace()
             throw e
         }
     }
+
+
+
+    override fun getTrips(tripId: Int,userId: Int): LiveData<List<Trip>> {
+        try {
+            return dataBase.getTrips(tripId,userId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+    }
+
+    override suspend fun getLatestTrip(): Trip {
+        try {
+        return dataBase.getLatestTrip()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        throw e
+    }
+    }
+
 
     override suspend fun insertUser(users: Users) {
         try {

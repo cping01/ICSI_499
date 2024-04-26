@@ -15,13 +15,13 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.Date
 
-class LocationProvider(private val context: Context, private val gpsProcessor: GPSProcessor) {
+class LocationProvider(private val context: Context, private val gpsProcessor: GPSProcessor, private val userId: Int) {
     private var currentTripId: Long = 0
     suspend fun startNewTrip() {
         val databaseClient = DatabaseClient(context)
         val appDatabase = databaseClient.getAppDatabase()
         val onDataBaseActions = appDatabase?.OnDataBaseActions()
-        val newTrip = Trip(date = Date()) // Set the date and time of the trip
+        val newTrip = Trip(userId = userId ,date = Date()) // Set the date and time of the trip
         currentTripId = onDataBaseActions?.insertTrip(newTrip) ?: 0
     }
 
@@ -37,7 +37,7 @@ class LocationProvider(private val context: Context, private val gpsProcessor: G
             if (gpsPoints.size >= SOME_THRESHOLD) {
                 GlobalScope.launch {
                     startNewTrip() // Start a new trip before calculating metrics
-                    gpsProcessor.calculateAllMetrics(context, gpsPoints.toList(), currentTripId.toInt())
+                    gpsProcessor.calculateAllMetrics(context, gpsPoints.toList(), currentTripId.toInt(), userId,)
                     gpsPoints.clear()
                 }
             }

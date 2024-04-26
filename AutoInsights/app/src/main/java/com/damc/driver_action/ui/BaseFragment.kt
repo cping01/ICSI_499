@@ -85,4 +85,5 @@ abstract class BaseFragment<BINDING : ViewDataBinding, VM : BaseViewModel>() : F
             is NavigationCommand.Back -> navController?.navigateUp()
         }
     }
+
 }

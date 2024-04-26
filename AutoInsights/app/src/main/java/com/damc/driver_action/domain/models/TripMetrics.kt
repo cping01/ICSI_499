@@ -8,10 +8,17 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "trip_metrics", foreignKeys = [ForeignKey(entity = Trip::class,
     parentColumns = ["trip_id"],
     childColumns = ["trip_id"],
-    onDelete = ForeignKey.CASCADE)])
+    onDelete = ForeignKey.CASCADE),
+    ForeignKey(entity = Users::class,
+        parentColumns = ["user_id"],
+        childColumns = ["user_id"],
+        onDelete = ForeignKey.CASCADE)
+])
 
 
 data class TripMetrics(
+    @ColumnInfo(name = "user_id")
+    val userId: Int,
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "trip_id")
     var tripId: Int = 0,
