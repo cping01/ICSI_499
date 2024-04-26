@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.damc.driver_action.domain.models.ActionData
+import com.damc.driver_action.domain.models.Trip
 import com.damc.driver_action.domain.models.Users
 import com.damc.driver_action.domain.models.TripMetrics
 
@@ -14,8 +15,16 @@ interface OnDataBaseActions {
     suspend fun insertUser(users: Users)
 
     @Insert
+    suspend fun insertTrip(trip: Trip): Long
+
+    @Insert
     suspend fun insertTripMetrics(tripMetrics: TripMetrics)
 
+    @Query("UPDATE trip_metrics SET maxSpeed = :maxSpeed, averageSpeed = :averageSpeed, tripDuration = :tripDuration, tripDistance = :tripDistance, speedingInstances = :speedingInstances, hardAccelerationInstances = :hardAccelerationInstances, hardBrakingInstances = :hardBrakingInstances WHERE trip_id = :tripId")
+    suspend fun updateTripMetrics(maxSpeed: Double, averageSpeed: Double, tripDuration: Double, tripDistance: Double, speedingInstances: Int, hardAccelerationInstances: Int, hardBrakingInstances: Int, tripId: Int)
+
+    @Query("SELECT * FROM trip_metrics WHERE trip_id = :tripId")
+    suspend fun getTripMetrics(tripId: Int): TripMetrics?
 
     @Query("SELECT COUNT(*) FROM users WHERE username LIKE :username LIMIT 1")
     fun isUsernameInDb(username: String): Int

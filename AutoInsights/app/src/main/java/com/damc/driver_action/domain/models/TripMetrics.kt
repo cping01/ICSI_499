@@ -2,9 +2,15 @@ package com.damc.driver_action.domain.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "trip_metrics")
+@Entity(tableName = "trip_metrics", foreignKeys = [ForeignKey(entity = Trip::class,
+    parentColumns = ["id"],
+    childColumns = ["tripId"],
+    onDelete = ForeignKey.CASCADE)])
+
+
 data class TripMetrics(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "trip_id")
@@ -12,7 +18,7 @@ data class TripMetrics(
     @ColumnInfo(name = "maxSpeed")
     val maxSpeed: Double, // kph
     @ColumnInfo(name = "averageSpeed")
-    val averageSpeed: Double, // kph
+    var averageSpeed: Double, // kph
     @ColumnInfo(name = "tripDuration")
     val tripDuration: Double, // minutes
     @ColumnInfo(name = "tripDistance")

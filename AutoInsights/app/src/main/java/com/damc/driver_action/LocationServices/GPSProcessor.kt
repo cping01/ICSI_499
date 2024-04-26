@@ -370,7 +370,7 @@ class GPSProcessor(private val points: List<GPSPoint>) {
         )
     }
 
-    suspend fun calculateAllMetrics(context: Context): TripSummary {
+    suspend fun calculateAllMetrics(context: Context, points: List<GPSPoint>, tripId: Int): TripSummary {
         val differences = projectTrajectoryPrivacy(points)
         val projectedTrajectory = processGPSPoints(differences)
         val segments = CalculateSegment(projectedTrajectory)
@@ -379,7 +379,20 @@ class GPSProcessor(private val points: List<GPSPoint>) {
         val databaseClient = DatabaseClient(context)
         val appDatabase = databaseClient.getAppDatabase()
         val onDataBaseActions = appDatabase?.OnDataBaseActions()
-        onDataBaseActions?.insertTripMetrics(tripMetrics)
+
+        // Retrieve the current TripMetrics for the trip
+        val currentTripMetrics = onDataBaseActions?.getTripMetrics(tripId)
+
+        // Calculate the new average speed
+        val totalDistance = currentTripMetrics?.tripDistance?.plus(metrics.tripDistance)
+        val totalDuration = currentTripMetrics?.tripDuration?.plus(metrics.tripDuration)
+        val newAverageSpeed = totalDistance?.div(totalDuration ?: 1)
+
+        // Update the average speed in the new TripMetrics
+        tripMetrics.averageSpeed = newAverageSpeed ?: tripMetrics.averageSpeed
+
+        // Update the TripMetrics in the database
+        onDataBaseActions?.updateTripMetrics(tripMetrics, tripId)
 
         return metrics
     }
