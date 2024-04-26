@@ -12,7 +12,7 @@ import com.damc.driver_action.domain.models.Users
     version = 5,
     exportSchema = false
 )
-@TypeConverters(Convertes::class)
+@TypeConverters(Converters::class)
 abstract class AppDataBase : RoomDatabase() {
     abstract fun OnDataBaseActions(): OnDataBaseActions
 }
