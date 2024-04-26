@@ -3,9 +3,47 @@ package com.damc.driver_action.data.local
 import com.damc.driver_action.data.local.room.OnDataBaseActions
 import com.damc.driver_action.domain.LocalRepostories
 import com.damc.driver_action.domain.models.ActionData
+import com.damc.driver_action.domain.models.Trip
+import com.damc.driver_action.domain.models.TripMetrics
 import com.damc.driver_action.domain.models.Users
 
 class LocalRepositoryImpl(val dataBase: OnDataBaseActions) : LocalRepostories {
+
+    override suspend fun insertTrip(trip: Trip): Long {
+        try {
+            return dataBase.insertTrip(trip)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+    }
+
+    override suspend fun insertTripMetrics(tripMetrics: TripMetrics) {
+        try {
+            dataBase.insertTripMetrics(tripMetrics)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+    }
+
+    override suspend fun updateTripMetrics(maxSpeed: Double, averageSpeed: Double, tripDuration: Double, tripDistance: Double, speedingInstances: Int, hardAccelerationInstances: Int, hardBrakingInstances: Int, tripId: Int) {
+        try {
+            dataBase.updateTripMetrics(maxSpeed, averageSpeed, tripDuration, tripDistance, speedingInstances, hardAccelerationInstances, hardBrakingInstances, tripId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+    }
+
+    override suspend fun getTripMetrics(tripId: Int): TripMetrics? {
+        try {
+            return dataBase.getTripMetrics(tripId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+    }
 
     override suspend fun insertUser(users: Users) {
         try {
