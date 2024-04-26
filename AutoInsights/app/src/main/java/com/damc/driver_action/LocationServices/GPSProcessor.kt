@@ -93,9 +93,7 @@ class GPSProcessor(private val points: List<GPSPoint>) {
         }
 
         val center = GPSPoint((minLat + maxLat) / 2, (minLon + maxLon) / 2, points[0].timestamp)
-        val initialRadius =
-            calculateRadius(points, center) // Calculate the initial radius based on points
-        //val initialRadius = 300 // Set a default initial radius
+        val initialRadius = calculateRadius(points, center) // Calculate the initial radius based on points
         // Initialize the Region
         var region = Region("Inferred Region", center, initialRadius)
         return region
@@ -132,7 +130,7 @@ class GPSProcessor(private val points: List<GPSPoint>) {
 
     // Helper Function to calculate center (replace with your logic)
     private fun calculateCenter(points: List<GPSPoint>): GPSPoint {
-        // You can implement averaging or a more sophisticated centroid calculation here
+        // can implement averaging or a more sophisticated centroid calculation here
         val sumLat = points.sumOf { it.latitude }
         val sumLon = points.sumOf { it.longitude }
         val avgLat = sumLat / points.size
@@ -236,27 +234,6 @@ class GPSProcessor(private val points: List<GPSPoint>) {
 
         return hardBrakingInstances
     }
-
-
-//    fun ProcessTrajectory(fileName: String, numRowsToSkip: Int): ArrayList<String> {
-//        val lines = ArrayList<String>()
-//        val file = File(fileName)
-//        var count = 0
-//
-//        file.forEachLine { line ->
-//            if (count >= numRowsToSkip) {
-//                val Data = line.split(",")
-//                val timestamp = Data[4] + " " + Data[5]
-//                val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-//                val date =  dateFormat.parse(timestamp)
-//                val GPSPoint = GPSPoint(Data[0].toDouble(), Data[1].toDouble(), date)
-//                lines.add(line)
-//            }
-//            count++
-//        }
-
-//        return lines
-//    }
 
     fun CalculateSegment(projectedTrajectory: List<GPSPoint>): List<Pair<Double, Long>> {
         val segments = mutableListOf<Pair<Double, Long>>()
@@ -397,167 +374,6 @@ class GPSProcessor(private val points: List<GPSPoint>) {
         return metrics
     }
 
-//    fun main() {
-//        val points = listOf(
-//            // pull list of gps data
-//        )
-//        val processor = com.damc.driver_action.LocationServices.GPSProcessor(points)
-//        val metrics = processor.calculateAllMetrics()
-//        // store 'metrics' in database
-//    }
-
-
-//    fun main() {
-//        val processedtrajectory = ProcessTrajectory("/Users/ajn/Desktop/20120712091004.plt", 6)
-//        for (i in 0 until processedtrajectory.size) {
-//            println(processedtrajectory[i])
-//            if (i == 5) {
-//                break
-//            }
-//        }
-//    }
-
-
-// fun main() {
-
-//     val points = listOf(
-//         GPSPoint(49.9931740, 30.2978897, 1668624500000),
-//         GPSPoint(49.9905254, 30.2917099, 1668624530000),
-//         GPSPoint(49.9863314, 30.2841568, 1668624565000),
-//         GPSPoint(49.9803709, 30.2748871, 1668624600000),
-//         GPSPoint(49.9726432, 30.2608109, 1668624650000),
-//         GPSPoint(49.9611597, 30.2402115, 1668624700000),
-//         GPSPoint(49.9545334, 30.2288818, 1668624730000),
-//         GPSPoint(49.9461388, 30.2175522, 1668624790000),
-//         GPSPoint(49.9406152, 30.2106857, 1668624830000),
-//         GPSPoint(49.9406152, 30.2089691, 1668624840000),
-//         GPSPoint(49.9399523, 30.2082825, 1668624850000),
-//         GPSPoint(49.9399523, 30.2048492, 1668624870000),
-//         GPSPoint(49.9406152, 30.2021027, 1668624890000),
-//         GPSPoint(49.9408361, 30.1996994, 1668624900000),
-//         GPSPoint(49.9412780, 30.1972961, 1668624915000),
-//         GPSPoint(49.9408361, 30.1952362, 1668624930000),
-//         GPSPoint(49.9397314, 30.1928329, 1668624950000),
-//         GPSPoint(49.9390685, 30.1890564, 1668624980000),
-//         GPSPoint(49.9384056, 30.1852798, 1668625010000),
-//         GPSPoint(49.9364168, 30.1852798, 1668625050000),
-//         GPSPoint(49.9348700, 30.1859665, 1668625080000),
-//         GPSPoint(49.9313341, 30.1883698, 1668625120000),
-//         GPSPoint(49.9249247, 30.1883698, 1668625180000),
-//         GPSPoint(49.9205040, 30.1907730, 1668625220000),
-//         GPSPoint(49.9129878, 30.1869965, 1668625280000),
-//         GPSPoint(49.9074604, 30.1849365, 1668625310000),
-//         GPSPoint(49.8979518, 30.1804733, 1668625360000),
-//         GPSPoint(49.8884413, 30.1766968, 1668625400000),
-//         GPSPoint(49.8756103, 30.1691437, 1668625480000),
-//         GPSPoint(49.8596774, 30.1636505, 1668625560000),
-//         GPSPoint(49.8512662, 30.1588440, 1668625610000),
-//         GPSPoint(49.8393110, 30.1595306, 1668625670000),
-//         GPSPoint(49.8313392, 30.1684570, 1668625720000),
-//         GPSPoint(49.8229231, 30.1794434, 1668625790000),
-//         GPSPoint(49.8100747, 30.1897430, 1668625870000)
-//     //     GPSPoint(49.8012117, 30.1993561, 1668625930000),
-//     //     GPSPoint(49.7927904, 30.2014160, 1668625960000),
-//     //     GPSPoint(49.7856976, 30.2000427, 1668625990000),
-//     //     GPSPoint(49.7768301, 30.2000427, 1668626040000),
-//     //     GPSPoint(49.7675176, 30.2000427, 1668626090000),
-//     //     GPSPoint(49.7599775, 30.2000427, 1668626130000),
-//     //     GPSPoint(49.7488871, 30.1993561, 1668626180000),
-//     //     GPSPoint(49.7382379, 30.1979828, 1668626230000),
-//     //     GPSPoint(49.7311371, 30.1966095, 1668626270000),
-//     //     GPSPoint(49.7013913, 30.1972961, 1668626400000),
-//     //       GPSPoint(49.6694054, 30.1890564, 1668626500000),
-//     // GPSPoint(49.6587388, 30.1904297, 1668626540000),
-//     // GPSPoint(49.6511818, 30.1883698, 1668626580000),
-//     // GPSPoint(49.6409558, 30.1842499, 1668626640000),
-//     // GPSPoint(49.6333961, 30.1835632, 1668626670000),
-//     // GPSPoint(49.6249456, 30.1808167, 1668626710000),
-//     // GPSPoint(49.6187180, 30.1808167, 1668626740000),
-//     // GPSPoint(49.6129345, 30.1794434, 1668626770000),
-//     // GPSPoint(49.6071504, 30.1787567, 1668626800000),
-//     // GPSPoint(49.5942447, 30.1753235, 1668626860000),
-//     // GPSPoint(49.5817809, 30.1746368, 1668626910000),
-//     // GPSPoint(49.5728761, 30.1746368, 1668626950000),
-//     // GPSPoint(49.5648605, 30.1725769, 1668627000000),
-//     // GPSPoint(49.5555073, 30.1725769, 1668627060000)
-// )
-
-
-//     // Region Inference
-//     val inferredRegion = inferRegionFromGPS(points)
-
-
-//     // Print the inferred region
-//     println("Inferred Region: $inferredRegion")
-
-
-//     val projectedTrajectory = processGPSPoints(points)
-//     // Calculate segments from the projected trajectory
-//     val segments = CalculateSegment(projectedTrajectory)
-
-//     // Print the segment information (outside of any loop)
-//     for (segment in segments) {
-//         println("Distance: ${segment.first} meters, Time Difference: ${segment.second} milliseconds")
-//     }
-
-
-//     // Analysis using the projected trajectory
-//     for (i in 0 until points.size - 1) {
-//         val point1 = points[i]
-//         val point2 = points[i + 1]
-
-//         // Original trajectory analysis
-//         val distance = haversine(point1, point2)
-//         val timeDifference = point2.timestamp - point1.timestamp
-//         val originalHeading = calculateHeading(point1.latitude, point1.longitude, point2.latitude, point2.longitude)
-
-//         println("Original Trajectory Segment:")
-//         println("Point 1: $point1")
-//         println("Point 2: $point2")
-//         println("Distance: $distance meters")
-//         println("Time Difference: $timeDifference milliseconds")
-//         println("Heading: $originalHeading degrees\n")
-//     }
-
-//     for (i in 0 until projectedTrajectory.size - 1) {
-//         val projectedPoint1 = projectedTrajectory[i]
-//         val projectedPoint2 = projectedTrajectory[i + 1]
-
-//         // Calculate segments from the projected trajectory
-//         val projectedSegments = CalculateSegment(listOf(projectedPoint1, projectedPoint2))
-
-//         for (segment in projectedSegments) {
-//             val projectedDistance = segment.first
-//             val projectedTimeDifference = segment.second
-
-//             // Skip segments with near-zero time differences
-//             if (projectedTimeDifference > 1000) {
-//                 val projectedHeading = calculateHeading(projectedPoint1.latitude, projectedPoint1.longitude, projectedPoint2.latitude, projectedPoint2.longitude)
-
-//                 println("Projected Trajectory Segment:")
-//                 println("Point 1: $projectedPoint1")
-//                 println("Point 2: $projectedPoint2")
-//                 println("Distance: $projectedDistance meters")
-//                 println("Time Difference: $projectedTimeDifference milliseconds")
-//                 println("Heading: $projectedHeading degrees\n")
-//             }
-//         }
-//     }
-
-//      val tripSummary = calculateMetrics(segments)
-
-// // Print the trip summary
-// println("Trip Summary:")
-// println("Max Speed: ${tripSummary.maxSpeed} mph")
-// println("Average Speed: ${tripSummary.averageSpeed} mph")
-// println("Trip Duration: ${tripSummary.tripDuration} minutes")
-// println("Trip Distance: ${tripSummary.tripDistance} miles")
-// println("Speeding Instances: ${tripSummary.speedingInstances}")
-// println("Hard Acceleration Instances: ${tripSummary.hardAccelerationInstances}")
-// println("Hard Braking Instances: ${tripSummary.hardBrakingInstances}")
-
-
-// }
 
 }
 
