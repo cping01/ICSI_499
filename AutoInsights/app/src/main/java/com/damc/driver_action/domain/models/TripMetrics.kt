@@ -6,8 +6,8 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "trip_metrics", foreignKeys = [ForeignKey(entity = Trip::class,
-    parentColumns = ["id"],
-    childColumns = ["tripId"],
+    parentColumns = ["trip_id"],
+    childColumns = ["trip_id"],
     onDelete = ForeignKey.CASCADE)])
 
 

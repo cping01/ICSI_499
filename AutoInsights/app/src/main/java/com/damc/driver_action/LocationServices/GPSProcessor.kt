@@ -9,7 +9,7 @@ import java.util.*
 import com.damc.driver_action.domain.models.TripMetrics
 import com.damc.driver_action.data.local.room.OnDataBaseActions
 
-class GPSProcessor(private val points: List<GPSPoint>) {
+class GPSProcessor() {
 
 
 
@@ -21,14 +21,14 @@ class GPSProcessor(private val points: List<GPSPoint>) {
         }
 
         fun haversine(destination: Geo): Double {
-            val dLat = Math.toRadians(destination.lat - this.lat);
-            val dLon = Math.toRadians(destination.lon - this.lon);
-            val originLat = Math.toRadians(this.lat);
-            val destinationLat = Math.toRadians(destination.lat);
-            val a = Math.pow(Math.sin(dLat / 2), 2.toDouble()) +
-                    Math.pow(Math.sin(dLon / 2), 2.toDouble()) *
-                    Math.cos(originLat) * Math.cos(destinationLat);
-            val c = 2 * Math.asin(Math.sqrt(a));
+            val dLat = Math.toRadians(destination.lat - this.lat)
+            val dLon = Math.toRadians(destination.lon - this.lon)
+            val originLat = Math.toRadians(this.lat)
+            val destinationLat = Math.toRadians(destination.lat)
+            val a = sin(dLat / 2).pow(2.toDouble()) +
+                    sin(dLon / 2).pow(2.toDouble()) *
+                    cos(originLat) * cos(destinationLat)
+            val c = 2 * asin(sqrt(a))
             return earthRadiusKm * c * 1000;  // return distance in meters
         }
     }
@@ -40,15 +40,6 @@ class GPSProcessor(private val points: List<GPSPoint>) {
     }
 
 
-    private fun calculateHeading(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-        val dlon = Math.toRadians(lon2 - lon1)
-        val latHead1 = Math.toRadians(lat1)
-        val latHead2 = Math.toRadians(lat2)
-
-        val y = sin(dlon) * cos(latHead2)
-        val x = cos(latHead1) * sin(latHead2) - sin(latHead1) * cos(latHead2) * cos(dlon)
-        return Math.toDegrees(atan2(y, x))
-    }
 
     fun projectTrajectoryPrivacy(points: List<GPSPoint>): List<GPSPoint> {
         // Scaling
@@ -108,25 +99,6 @@ class GPSProcessor(private val points: List<GPSPoint>) {
         return maxDistance
     }
 
-    private fun calculateRegion(
-        currentRegion: Region,
-        newPoint: GPSPoint,
-        recentPoints: List<GPSPoint>
-    ): Region {
-        // Distance from new point to region center
-        val distance = haversine(currentRegion.center, newPoint)
-
-        // Simple Expansion Logic
-        if (distance > currentRegion.radius * (1 + 0.2)) {
-            // Point is outside (with buffer), expand radius
-            val newRadius = distance * 1.1 // Expand by 10%
-            return Region(currentRegion.name, currentRegion.center, newRadius)
-        } else {
-            // Optionally recalculate the center based on recent points
-            val newCenter = calculateCenter(recentPoints + newPoint)
-            return Region(currentRegion.name, newCenter, currentRegion.radius)
-        }
-    }
 
     // Helper Function to calculate center (replace with your logic)
     private fun calculateCenter(points: List<GPSPoint>): GPSPoint {
@@ -138,7 +110,7 @@ class GPSProcessor(private val points: List<GPSPoint>) {
         return GPSPoint(avgLat, avgLon, points[0].timestamp) // Use timestamp from any point
     }
 
-    fun processGPSPoints( points: List<GPSPoint>): List<GPSPoint> {
+    fun processGPSPoints(points: List<GPSPoint>): List<GPSPoint> {
         var lastInferenceTime = System.currentTimeMillis()
         val recentPoints = mutableListOf<GPSPoint>()
         val reInferenceInterval = 5 * 60 * 1000
@@ -333,9 +305,9 @@ class GPSProcessor(private val points: List<GPSPoint>) {
         val hardBrakingInstances: Int
     )
 
-    fun tripSummaryToTripMetrics(tripSummary: GPSProcessor.TripSummary): TripMetrics {
+    fun tripSummaryToTripMetrics(tripSummary: TripSummary): TripMetrics {
         return TripMetrics(
-            // Fill in the properties here. For example:
+            // Fill in the properties
             maxSpeed = tripSummary.maxSpeed,
             averageSpeed = tripSummary.averageSpeed,
             tripDuration = tripSummary.tripDuration,
@@ -343,7 +315,7 @@ class GPSProcessor(private val points: List<GPSPoint>) {
             speedingInstances = tripSummary.speedingInstances,
             hardAccelerationInstances = tripSummary.hardAccelerationInstances,
             hardBrakingInstances = tripSummary.hardBrakingInstances
-            // Add the rest of the properties here
+
         )
     }
 
@@ -361,15 +333,26 @@ class GPSProcessor(private val points: List<GPSPoint>) {
         val currentTripMetrics = onDataBaseActions?.getTripMetrics(tripId)
 
         // Calculate the new average speed
-        val totalDistance = currentTripMetrics?.tripDistance?.plus(metrics.tripDistance)
-        val totalDuration = currentTripMetrics?.tripDuration?.plus(metrics.tripDuration)
-        val newAverageSpeed = totalDistance?.div(totalDuration ?: 1)
+        val totalDistance: Double? = currentTripMetrics?.tripDistance?.plus(metrics.tripDistance)
+        val totalDuration: Double? = currentTripMetrics?.tripDuration?.plus(metrics.tripDuration)
+        val newAverageSpeed = if (totalDuration != null && totalDistance != null) {
+            totalDistance / totalDuration
+        } else {
+            // Handle the case where totalDuration or totalDistance is null
+            0.0
+        }
 
         // Update the average speed in the new TripMetrics
-        tripMetrics.averageSpeed = newAverageSpeed ?: tripMetrics.averageSpeed
+        tripMetrics.averageSpeed = (newAverageSpeed ?: tripMetrics.averageSpeed)
 
         // Update the TripMetrics in the database
-        onDataBaseActions?.updateTripMetrics(tripMetrics, tripId)
+        onDataBaseActions?.updateTripMetrics(    maxSpeed = tripMetrics.maxSpeed,
+            averageSpeed = tripMetrics.averageSpeed,
+            tripDuration = tripMetrics.tripDuration,
+            tripDistance = tripMetrics.tripDistance,
+            speedingInstances = tripMetrics.speedingInstances,
+            hardAccelerationInstances = tripMetrics.hardAccelerationInstances,
+            hardBrakingInstances = tripMetrics.hardBrakingInstances, tripId)
 
         return metrics
     }
