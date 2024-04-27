@@ -1,5 +1,6 @@
 package com.damc.driver_action.ui.homeBase.home
-
+import LocationProvider1
+import com.damc.driver_action.LocationServices.GPSProcessor
 import android.Manifest
 import android.app.PendingIntent
 import android.content.Context
@@ -32,6 +33,7 @@ import com.damc.driver_action.velocityHelper.IBaseGpsListener
 import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityRecognitionClient
 import com.google.android.gms.location.ActivityTransitionResult
+import com.google.androidbrowserhelper.locationdelegation.LocationProvider
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -41,6 +43,10 @@ import java.util.Locale
 
 class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(),
     EasyPermissions.PermissionCallbacks, IBaseGpsListener, OnActivityReceived {
+
+    val userId = (requireActivity().application as AssignmentApplication).getLoginUser().userId
+    val gpsProcessor = GPSProcessor() // Assuming you have a parameterless constructor
+    val locationProvider = LocationProvider1(requireContext(), gpsProcessor, userId)
 
     val TAG = HomeScreen::class.java.simpleName
 
@@ -126,12 +132,12 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                             if (binding.tvUserStatus.text != "IN VEHICLE") {
                                 binding.llDriverData.visibility = View.GONE
                                 viewModel.isStartRide = false
+                                locationProvider.stopLocationUpdates() // Stop feeding GPS data
                             } else {
                                 binding.llDriverData.visibility = View.VISIBLE
                                 viewModel.isStartRide = true
+                                locationProvider.startLocationUpdates() // Start feeding GPS data
                             }
-
-
                         }
                     }
                 }
@@ -421,10 +427,12 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
             binding.llDriverData.visibility = View.VISIBLE
             binding.btRider.text = "Stop Ride"
             binding.tvUserStatus.text = "Driving"
+            locationProvider.startLocationUpdates() // Start feeding GPS data
         } else {
             binding.llDriverData.visibility = View.GONE
             binding.btRider.text = "Start Ride"
             binding.tvUserStatus.text = "Waiting for google Service"
+            locationProvider.stopLocationUpdates() // Stop feeding GPS data
         }
 
         viewModel.isStartRide = !viewModel.isStartRide

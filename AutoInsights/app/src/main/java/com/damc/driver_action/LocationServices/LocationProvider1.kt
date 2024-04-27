@@ -15,7 +15,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.Date
 
-class LocationProvider(private val context: Context, private val gpsProcessor: GPSProcessor, private val userId: Int) {
+class LocationProvider1(private val context: Context, private val gpsProcessor: GPSProcessor, private val userId: Int) {
     private var currentTripId: Long = 0
     suspend fun startNewTrip() {
         val databaseClient = DatabaseClient(context)
