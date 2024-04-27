@@ -42,6 +42,7 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
 
 
     override fun onBindViewHolder(holder: SummaryAdapter.ViewHolder, position: Int) {
+        val tripMetrics: TripMetrics = if (position < tripMetricsData.size) tripMetricsData[position] else TripMetrics(0 ,0,0.0,0.0,0.0, 0.0, 0, 0, 0)
         holder.tvDate.text = android.icu.text.SimpleDateFormat("E MMM dd, yyyy", Locale.US)
             .format(Date())
         holder.tvHgSpeed.text = "${"%.1f".format(summerData[position].highestSpeed)} m/s"
@@ -60,12 +61,6 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
             }
             isShowMore = !isShowMore
         }
-
-
-        var totalAction =
-            summerData[position].hardStopCount + summerData[position].mediumAcceleration
-        +summerData[position].goodAcceleration + summerData[position].hardStopCount
-        +summerData[position].mediumStopCount + summerData[position].goodStopCount
 
         // Check if there are trip data for this position
         if (position < tripData.size) {
@@ -90,10 +85,18 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
             holder.tvHardBrakingInstances.text = "Hard Braking Instances: ${tripMetrics.hardBrakingInstances}"
         }
 
+
+        var totalAction =
+            tripMetrics.hardBrakingInstances + summerData[position].mediumAcceleration
+        +summerData[position].goodAcceleration + tripMetrics.hardAccelerationInstances
+        +summerData[position].mediumStopCount + summerData[position].goodStopCount
+
+
+
         holder.pieChart.addPieSlice(
             PieModel(
                 "Hard Acceleration",
-                summerData[position].fastAcceleration.toFloat(),
+                tripMetrics.hardAccelerationInstances.toFloat(),
                 holder.itemView.context.resources.getColor(R.color.hard_acceleration)
             )
         )
@@ -117,7 +120,7 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
         holder.pieChart.addPieSlice(
             PieModel(
                 "Hard Stop",
-                summerData[position].hardStopCount.toFloat(),
+                tripMetrics.hardBrakingInstances.toFloat(),
                 holder.itemView.context.resources.getColor(R.color.hard_stop)
             )
         )
@@ -144,12 +147,16 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
             val dataToSave =
                 "----------------------START------------------------------\n " +
                         "Username - ${(holder.itemView.context.applicationContext as AssignmentApplication).getLoginUser().username}\n" +
+                        "Date - ${holder.tvDate1.text}\n" +
+                        "Trip Duration: ${tripMetrics.tripDuration} minutes\n" +
+                        "Trip Distance: ${tripMetrics.tripDistance}\nkm"
                         "Total Driver Action count - ${totalAction}\n" +
-                        "Highest Speed -  ${summerData[position].highestSpeed}\n" +
-                        "Hard Stop Count - ${summerData[position].hardStopCount}\n" +
+                        "Highest Speed -  ${tripMetrics.maxSpeed}\n" +
+                                "Speeding Instances: ${tripMetrics.speedingInstances}\n" +
+                                "Hard Stop Instances: ${tripMetrics.hardBrakingInstances}\n" +
                         "Medium Stop Count - ${summerData[position].mediumStopCount}\n" +
                         "Good Stop Count - ${summerData[position].goodStopCount}\n" +
-                        "Hard Acceleration Count - ${summerData[position].fastAcceleration}\n" +
+                                "Hard Acceleration Instances: ${tripMetrics.hardAccelerationInstances}\n" +
                         "Medium Acceleration Count - ${summerData[position].mediumAcceleration}\n" +
                         "Good Acceleration Count - ${summerData[position].goodStopCount}\n" +
                         "-----------------------END------------------"
