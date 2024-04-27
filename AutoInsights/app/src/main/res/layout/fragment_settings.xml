@@ -19,100 +19,54 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#E5E5F3">
+        android:background="#762cb0">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Settings"
+            android:textColor="#f5be18"
+            android:textSize="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/top_background_gradient"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0" />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="193dp"
-                android:layout_height="49dp"
-                android:fontFamily="@font/fava"
-                android:shadowColor="#DF000000"
-                android:shadowRadius="10"
-                android:text="Settings"
-                android:textAlignment="center"
-                android:textColor="#f5be18"
-                android:textSize="40sp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/imageView2"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/rounded_layout"
-            android:backgroundTint="#762cb0"
             android:orientation="vertical"
-            android:padding="20dp"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-            tools:layout_editor_absoluteX="10dp">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3">
 
-            <LinearLayout
+            <CheckBox
+                android:id="@+id/cb_biometrics"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/rounded_layout"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:text="Enable Biometrics"
+                android:layout_gravity="clip_vertical">
 
-                <CheckBox
-                    android:id="@+id/cb_biometrics"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="clip_vertical"
-                    android:fontFamily="@font/rowdies_l"
-                    android:text="Enable Biometrics"
-                    android:textColor="#404040">
+            </CheckBox>
 
-                </CheckBox>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linearLayout"
+            <CheckBox
+                android:id="@+id/cb_driver_tracking"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rounded_layout"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:layout_gravity="clip_vertical"
+                android:text="Disable Driver Tracking">
 
-                <CheckBox
-                    android:id="@+id/cb_driver_tracking"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="clip_vertical"
-                    android:fontFamily="@font/rowdies_l"
-                    android:text="Disable Auto Drive Tracking"
-                    android:textColor="#404040">
+            </CheckBox>
 
-                </CheckBox>
-
-            </LinearLayout>
         </LinearLayout>
-
+        
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

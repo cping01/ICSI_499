@@ -35,7 +35,6 @@ import com.google.android.gms.location.ActivityTransitionResult
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
-import java.util.Date
 import java.util.Formatter
 import java.util.Locale
 
@@ -99,8 +98,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         viewModel.hardStopCount = MutableLiveData(viewModel.actionData.hardStopCount)
         viewModel.fastAccelerartionCount = MutableLiveData(viewModel.actionData.fastAcceleration)
 
-        binding.tvDate.text = "Today is " + android.icu.text.SimpleDateFormat("E MMM dd, yyyy", Locale.US)
-            .format(Date())
+        binding.tvDate.text = Utils.getCurrentDateAsString()
 
         viewModel.accelerometer.setListener(object : Accelerometer.Listener {
             override fun onTranslation(acceleration: Float) {
@@ -125,7 +123,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                             binding.tvUserStatus.text =
                                 ActivityTransitionsUtil.toActivityString(event.activityType)
 
-                            if (binding.tvUserStatus.text != "Driving") {
+                            if (binding.tvUserStatus.text != "IN VEHICLE") {
                                 binding.llDriverData.visibility = View.GONE
                                 viewModel.isStartRide = false
                             } else {
@@ -189,11 +187,11 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         if (user.autoTrackingEnabled) {
             binding.btRider.visibility = View.GONE
             binding.llDriverData.visibility = View.VISIBLE
-            binding.tvUserStatus.text = "Waiting for service..."
+            binding.tvUserStatus.text = "Waiting for google Service"
         } else {
             binding.btRider.visibility = View.VISIBLE
             binding.llDriverData.visibility = View.GONE
-            binding.tvUserStatus.text = "Waiting for service..."
+            binding.tvUserStatus.text = "Waiting for google Service"
         }
     }
 
@@ -331,7 +329,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                 //showToast("Activity Tracking Started")
             }
             .addOnFailureListener {
-                //showToast("Activity Tracking Failed")
+                showToast("Activity Tracking Failed")
             }
     }
 
@@ -347,10 +345,10 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
             .removeActivityTransitionUpdates(getPendingIntent())
             .addOnSuccessListener {
                 getPendingIntent().cancel()
-                showToast("Successful deregistration")
+                showToast("successful deregistration")
             }
             .addOnFailureListener { e: Exception ->
-                showToast("Unsuccessful deregistration")
+                showToast("unsuccessful deregistration")
             }
     }
 
@@ -426,7 +424,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         } else {
             binding.llDriverData.visibility = View.GONE
             binding.btRider.text = "Start Ride"
-            binding.tvUserStatus.text = "Waiting for service..."
+            binding.tvUserStatus.text = "Waiting for google Service"
         }
 
         viewModel.isStartRide = !viewModel.isStartRide

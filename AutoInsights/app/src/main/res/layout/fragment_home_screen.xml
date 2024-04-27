@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -19,95 +18,67 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#E5E5F3">
+        android:background="#762cb0"
+        android:padding="16dp">
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            app:layout_constraintTop_toTopOf="parent">
-
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:src="@drawable/top_background_gradient"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0" />
-
-            <TextView
-                android:id="@+id/AutoInsights"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fava"
-                android:shadowColor="#DF000000"
-                android:shadowRadius="20"
-                android:text="AutoInsights"
-                android:textAlignment="center"
-                android:textColor="@color/yellow"
-                android:textSize="50sp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/imageView2"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.1" />
-
-            <LinearLayout
-                android:layout_width="230dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_layout"
-                android:orientation="horizontal"
-                android:padding="10dp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/AutoInsights">
-
-                <TextView
-                    android:id="@+id/tv_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:fontFamily="@font/rowdies_l"
-                    android:gravity="center"
-                    android:text="Date"
-                    android:textSize="15dp" />
-            </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="AutoInsights"
+            android:textColor="#f5be18"
+            android:textSize="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ScrollView
-            android:id="@+id/scrollView2"
-            android:layout_width="360dp"
-            android:layout_height="550dp"
-            android:layout_marginTop="10dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-            app:layout_constraintVertical_bias="0">
+            app:layout_constraintTop_toBottomOf="@+id/textView3">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
+                android:layout_height="0dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.517"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3">
+                app:layout_constraintTop_toBottomOf="@+id/textView3"
+                app:layout_constraintVertical_bias="0.0">
 
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/rounded_layout"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:id="@+id/tv_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:text="Date"
+                        android:textSize="15dp" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/ll_user_status"
                     android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/rounded_layout"
                     android:orientation="horizontal"
                     android:weightSum="2">
@@ -117,7 +88,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:fontFamily="@font/rowdies_l"
                         android:gravity="left"
                         android:padding="16dp"
                         android:text="User Status"
@@ -127,53 +97,43 @@
                         android:id="@+id/tv_user_status"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:fontFamily="@font/rowdies_l"
-                        android:gravity="right|center_vertical"
+                        android:gravity="right"
                         android:padding="16dp"
-                        android:text="Waiting for service..."
+                        android:text="Waiting for the google service..."
                         android:textSize="15dp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/ll_driver_data"
                     android:layout_width="match_parent"
-                    android:layout_height="340dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/rounded_layout"
-                    android:backgroundTint="#762cb0"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:id="@+id/ll_velocity"
-                        android:layout_width="340dp"
-                        android:layout_height="65dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="14dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         android:background="@drawable/rounded_layout"
-                        android:gravity="center|center_vertical"
                         android:orientation="horizontal"
                         android:weightSum="2">
 
                         <TextView
-                            android:layout_width="320dp"
-                            android:layout_height="60dp"
-                            android:layout_gravity="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:fontFamily="@font/rowdies_l"
                             android:gravity="left"
                             android:padding="16dp"
-                            android:text="Speed"
+                            android:text="Velocity"
                             android:textSize="15dp" />
 
                         <TextView
                             android:id="@+id/tv_velocity"
-                            android:layout_width="320dp"
-                            android:layout_height="60dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
-                            android:fontFamily="@font/rowdies_l"
                             android:gravity="right"
                             android:padding="16dp"
                             android:text="N/A"
@@ -182,12 +142,10 @@
 
                     <LinearLayout
                         android:id="@+id/ll_acceleration"
-                        android:layout_width="340dp"
-                        android:layout_height="65dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="14dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         android:background="@drawable/rounded_layout"
-                        android:gravity="center"
                         android:orientation="horizontal"
                         android:weightSum="2">
 
@@ -196,7 +154,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
-                            android:fontFamily="@font/rowdies_l"
                             android:gravity="left"
                             android:padding="16dp"
                             android:text="Acceleration"
@@ -207,7 +164,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:fontFamily="@font/rowdies_l"
                             android:gravity="right"
                             android:padding="16dp"
                             android:text="N/A"
@@ -216,12 +172,10 @@
 
                     <LinearLayout
                         android:id="@+id/ll_hard_stop"
-                        android:layout_width="340dp"
-                        android:layout_height="65dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="14dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         android:background="@drawable/rounded_layout"
-                        android:gravity="center|center_vertical"
                         android:orientation="horizontal"
                         android:weightSum="2">
 
@@ -229,10 +183,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:fontFamily="@font/rowdies_l"
                             android:gravity="left"
                             android:padding="16dp"
-                            android:text="Hard Stops"
+                            android:text="Hard Stop Count"
                             android:textSize="15dp" />
 
                         <TextView
@@ -241,7 +194,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
-                            android:fontFamily="@font/rowdies_l"
                             android:gravity="right"
                             android:padding="16dp"
                             android:text="N/A"
@@ -250,12 +202,10 @@
 
                     <LinearLayout
                         android:id="@+id/ll_user_fast_acceleration"
-                        android:layout_width="340dp"
-                        android:layout_height="65dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="14dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         android:background="@drawable/rounded_layout"
-                        android:gravity="center|center_vertical"
                         android:orientation="horizontal"
                         android:weightSum="2">
 
@@ -263,10 +213,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:fontFamily="@font/rowdies_l"
                             android:gravity="left"
                             android:padding="16dp"
-                            android:text="Fast Accelerations"
+                            android:text="Fast Acceleration Count"
                             android:textSize="15dp" />
 
                         <TextView
@@ -275,7 +224,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
-                            android:fontFamily="@font/rowdies_l"
                             android:gravity="right"
                             android:padding="16dp"
                             android:text="N/A"
@@ -286,11 +234,10 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/bt_rider"
                     android:layout_width="match_parent"
-                    android:layout_height="75dp"
-                    android:fontFamily="@font/rowdies_l"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:onClick="@{fragment.onClickSummery}"
                     android:text="Start Ride"
-                    android:textSize="30sp"
                     android:visibility="visible">
 
                 </com.google.android.material.button.MaterialButton>
