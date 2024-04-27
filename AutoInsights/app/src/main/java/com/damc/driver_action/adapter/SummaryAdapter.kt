@@ -149,7 +149,7 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
                         "Username - ${(holder.itemView.context.applicationContext as AssignmentApplication).getLoginUser().username}\n" +
                         "Date - ${holder.tvDate1.text}\n" +
                         "Trip Duration: ${tripMetrics.tripDuration} minutes\n" +
-                        "Trip Distance: ${tripMetrics.tripDistance}\nkm"
+                        "Trip Distance: ${tripMetrics.tripDistance}\nkm" +
                         "Total Driver Action count - ${totalAction}\n" +
                         "Highest Speed -  ${tripMetrics.maxSpeed}\n" +
                                 "Speeding Instances: ${tripMetrics.speedingInstances}\n" +
