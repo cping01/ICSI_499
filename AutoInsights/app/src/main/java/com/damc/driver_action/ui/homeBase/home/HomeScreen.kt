@@ -39,14 +39,15 @@ import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.Formatter
 import java.util.Locale
+import kotlin.properties.Delegates
 
 
 class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(),
     EasyPermissions.PermissionCallbacks, IBaseGpsListener, OnActivityReceived {
 
-    val userId = (requireActivity().application as AssignmentApplication).getLoginUser().userId
+    var userId : Int = 0
     val gpsProcessor = GPSProcessor() // Assuming you have a parameterless constructor
-    val locationProvider = LocationProvider1(requireContext(), gpsProcessor, userId)
+    lateinit var locationProvider: LocationProvider1
 
     val TAG = HomeScreen::class.java.simpleName
 
@@ -91,6 +92,8 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         }
 
     override fun onReady(savedInstanceState: Bundle?) {
+        locationProvider = LocationProvider1(requireContext(), gpsProcessor, userId)
+        userId = (requireActivity().application as AssignmentApplication).getLoginUser().userId
 
         viewModel.users = (requireActivity().application as AssignmentApplication).getLoginUser()
 
