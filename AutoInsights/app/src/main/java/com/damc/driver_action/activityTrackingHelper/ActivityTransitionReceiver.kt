@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-open class ActivityTransitionReceiver() :
+open class ActivityTransitionReceiver :
     BroadcastReceiver() {
 //    private var onActivityReceivedIn: OnActivityReceived
 //

@@ -17,6 +17,7 @@ import java.util.Date
 
 class LocationProvider1(private val context: Context, private val gpsProcessor: GPSProcessor, private val userId: Int) {
     private var currentTripId: Long = 0
+    private var isTripStarted = false
     suspend fun startNewTrip() {
         val databaseClient = DatabaseClient(context)
         val appDatabase = databaseClient.getAppDatabase()
@@ -36,8 +37,11 @@ class LocationProvider1(private val context: Context, private val gpsProcessor: 
             val SOME_THRESHOLD = 1000
             if (gpsPoints.size >= SOME_THRESHOLD) {
                 GlobalScope.launch {
-                    startNewTrip() // Start a new trip before calculating metrics
-                    gpsProcessor.calculateAllMetrics(context, gpsPoints.toList(), currentTripId.toInt(), userId,)
+                    if (!isTripStarted) {
+                        startNewTrip() // Start a new trip before calculating metrics
+                        isTripStarted = true
+                    }
+                    gpsProcessor.calculateAllMetrics(context, gpsPoints.toList(), currentTripId.toInt(), userId)
                     gpsPoints.clear()
                 }
             }
@@ -58,5 +62,6 @@ class LocationProvider1(private val context: Context, private val gpsProcessor: 
 
     fun stopLocationUpdates() {
         locationManager.removeUpdates(locationListener)
+        isTripStarted = false
     }
 }

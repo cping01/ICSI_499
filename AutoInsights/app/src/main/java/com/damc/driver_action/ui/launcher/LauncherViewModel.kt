@@ -43,7 +43,7 @@ class LauncherViewModel(
 
         if (user != null) {
             var actionData: ActionData? =
-                database.dateIsRegisteredInDb(user!!.userId, Utils.getCurrentDateAsString())
+                database.dateIsRegisteredInDb(user.userId, Utils.getCurrentDateAsString())
             application.setLoginUser(user)
             if (actionData != null) {
                 application.setActionData(actionData)

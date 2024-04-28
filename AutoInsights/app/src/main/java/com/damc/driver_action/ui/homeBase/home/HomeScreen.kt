@@ -374,18 +374,13 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
             .show()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-//        deregisterForUpdates()
-    }
-
 
     private fun requestActivityTransitionPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             EasyPermissions.requestPermissions(
                 this,
                 "You need to allow Activity Transition Permissions in order to recognize your activities",
-                Constants.REQUEST_CODE_ACTIVITY_TRANSITION,
+                REQUEST_CODE_ACTIVITY_TRANSITION,
                 Manifest.permission.ACTIVITY_RECOGNITION
             )
         }

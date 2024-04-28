@@ -15,7 +15,7 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 
-abstract class BaseFragment<BINDING : ViewDataBinding, VM : BaseViewModel>() : Fragment() {
+abstract class BaseFragment<BINDING : ViewDataBinding, VM : BaseViewModel> : Fragment() {
     @get:LayoutRes
     protected abstract val layoutId: Int
     protected abstract val viewModel: VM
@@ -30,14 +30,6 @@ abstract class BaseFragment<BINDING : ViewDataBinding, VM : BaseViewModel>() : F
     }
 
     protected abstract fun onReady(savedInstanceState: Bundle?)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onStart() {
-        super.onStart()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

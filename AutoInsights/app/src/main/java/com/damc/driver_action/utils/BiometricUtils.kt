@@ -34,10 +34,6 @@ object BiometricUtils {
                 listener.onBiometricAuthenticateError(errorCode, errString.toString())
             }
 
-            override fun onAuthenticationFailed() {
-                super.onAuthenticationFailed()
-            }
-
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
                 listener.onBiometricAuthenticateSuccess(result)
