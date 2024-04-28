@@ -9,7 +9,7 @@
         android:id="@+id/it_summery"
         android:enabled="true"
         android:icon="@drawable/ic_all"
-        android:title="Summery"/>
+        android:title="Summary"/>
     <item
         android:id="@+id/it_settings"
         android:enabled="true"

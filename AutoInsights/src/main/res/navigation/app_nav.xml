@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/app_nav"
+    app:startDestination="@id/launcherFragment">
+
+    <fragment
+        android:id="@+id/launcherFragment"
+        android:name="com.damc.driver_action.ui.launcher.LauncherFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_launcher">
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@+id/registerFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpToInclusive="false" />
+
+        <action
+            android:id="@+id/action_login_to_home"
+            app:destination="@+id/homeScreen"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpToInclusive="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.damc.driver_action.ui.register.RegisterFragment"
+        android:label="fragment_register"
+        tools:layout="@layout/fragment_register">
+<!--        <action-->
+<!--            android:id="@+id/action_register_to_loging"-->
+<!--            app:destination="@+id/launcherFragment"-->
+<!--            app:enterAnim="@anim/nav_default_enter_anim"-->
+<!--            app:exitAnim="@anim/nav_default_exit_anim"-->
+<!--            app:popEnterAnim="@anim/fade_in"-->
+<!--            app:popExitAnim="@anim/fade_out"-->
+<!--            app:popUpToInclusive="false" />-->
+    </fragment>
+
+    <fragment
+        android:id="@+id/homeScreen"
+        android:name="com.damc.driver_action.ui.home.HomeScreen"
+        android:label="home_screen"
+        tools:layout="@layout/fragment_home_screen">
+                <action
+                    android:id="@+id/home_to_summery"
+                    app:destination="@+id/summery"
+                    app:enterAnim="@anim/nav_default_enter_anim"
+                    app:exitAnim="@anim/nav_default_exit_anim"
+                    app:popEnterAnim="@anim/fade_in"
+                    app:popExitAnim="@anim/fade_out"
+                    app:popUpToInclusive="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/summery"
+        android:name="com.damc.driver_action.ui.summerScreen.SummeryFragment"
+        android:label="summery"
+        tools:layout="@layout/fragment_summery">
+        <!--        <action-->
+        <!--            android:id="@+id/action_register_to_loging"-->
+        <!--            app:destination="@+id/launcherFragment"-->
+        <!--            app:enterAnim="@anim/nav_default_enter_anim"-->
+        <!--            app:exitAnim="@anim/nav_default_exit_anim"-->
+        <!--            app:popEnterAnim="@anim/fade_in"-->
+        <!--            app:popExitAnim="@anim/fade_out"-->
+        <!--            app:popUpToInclusive="false" />-->
+    </fragment>
+
+
+
+</navigation>
