@@ -38,7 +38,7 @@ class Accelerometer(context: Context) {
 
         sensorEventListener = object : SensorEventListener {
             override fun onSensorChanged(sensorEvent: SensorEvent) {
-                sensorEvent.let {
+                sensorEvent?.let {
                     if (it.sensor.type == Sensor.TYPE_ACCELEROMETER) {
                         val alpha = 0.9f // low-pass filter coefficient
 

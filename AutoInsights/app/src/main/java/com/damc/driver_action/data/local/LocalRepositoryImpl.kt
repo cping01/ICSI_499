@@ -86,7 +86,7 @@ class LocalRepositoryImpl(val dataBase: OnDataBaseActions) : LocalRepostories {
         }
     }
 
-    override suspend fun userLogin(username: String, password: String): Users {
+    override suspend fun userLogin(username: String, password: String): Users? {
         try {
             return dataBase.userLogin(username, password)
         } catch (e: Exception) {

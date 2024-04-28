@@ -1,6 +1,5 @@
 package com.damc.driver_action.ui.homeBase.home
-import LocationProvider1
-import com.damc.driver_action.LocationServices.GPSProcessor
+
 import android.Manifest
 import android.app.PendingIntent
 import android.content.Context
@@ -33,21 +32,16 @@ import com.damc.driver_action.velocityHelper.IBaseGpsListener
 import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityRecognitionClient
 import com.google.android.gms.location.ActivityTransitionResult
-import com.google.androidbrowserhelper.locationdelegation.LocationProvider
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+import java.util.Date
 import java.util.Formatter
 import java.util.Locale
-import kotlin.properties.Delegates
 
 
 class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(),
     EasyPermissions.PermissionCallbacks, IBaseGpsListener, OnActivityReceived {
-
-    var userId : Int = 0
-    val gpsProcessor = GPSProcessor() // Assuming you have a parameterless constructor
-    lateinit var locationProvider: LocationProvider1
 
     val TAG = HomeScreen::class.java.simpleName
 
@@ -92,8 +86,6 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         }
 
     override fun onReady(savedInstanceState: Bundle?) {
-        locationProvider = LocationProvider1(requireContext(), gpsProcessor, userId)
-        userId = (requireActivity().application as AssignmentApplication).getLoginUser().userId
 
         viewModel.users = (requireActivity().application as AssignmentApplication).getLoginUser()
 
@@ -107,7 +99,8 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         viewModel.hardStopCount = MutableLiveData(viewModel.actionData.hardStopCount)
         viewModel.fastAccelerartionCount = MutableLiveData(viewModel.actionData.fastAcceleration)
 
-        binding.tvDate.text = Utils.getCurrentDateAsString()
+        binding.tvDate.text = "Today is " + android.icu.text.SimpleDateFormat("E MMM dd, yyyy", Locale.US)
+            .format(Date())
 
         viewModel.accelerometer.setListener(object : Accelerometer.Listener {
             override fun onTranslation(acceleration: Float) {
@@ -132,15 +125,15 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                             binding.tvUserStatus.text =
                                 ActivityTransitionsUtil.toActivityString(event.activityType)
 
-                            if (binding.tvUserStatus.text != "IN VEHICLE") {
+                            if (binding.tvUserStatus.text != "Driving") {
                                 binding.llDriverData.visibility = View.GONE
                                 viewModel.isStartRide = false
-                                locationProvider.stopLocationUpdates() // Stop feeding GPS data
                             } else {
                                 binding.llDriverData.visibility = View.VISIBLE
                                 viewModel.isStartRide = true
-                                locationProvider.startLocationUpdates() // Start feeding GPS data
                             }
+
+
                         }
                     }
                 }
@@ -196,11 +189,11 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         if (user.autoTrackingEnabled) {
             binding.btRider.visibility = View.GONE
             binding.llDriverData.visibility = View.VISIBLE
-            binding.tvUserStatus.text = "Waiting for google Service"
+            binding.tvUserStatus.text = "Waiting for service..."
         } else {
             binding.btRider.visibility = View.VISIBLE
             binding.llDriverData.visibility = View.GONE
-            binding.tvUserStatus.text = "Waiting for google Service"
+            binding.tvUserStatus.text = "Waiting for service..."
         }
     }
 
@@ -338,7 +331,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                 //showToast("Activity Tracking Started")
             }
             .addOnFailureListener {
-                showToast("Activity Tracking Failed")
+                //showToast("Activity Tracking Failed")
             }
     }
 
@@ -354,10 +347,10 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
             .removeActivityTransitionUpdates(getPendingIntent())
             .addOnSuccessListener {
                 getPendingIntent().cancel()
-                showToast("successful deregistration")
+                showToast("Successful deregistration")
             }
             .addOnFailureListener { e: Exception ->
-                showToast("unsuccessful deregistration")
+                showToast("Unsuccessful deregistration")
             }
     }
 
@@ -377,13 +370,18 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
             .show()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+//        deregisterForUpdates()
+    }
+
 
     private fun requestActivityTransitionPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             EasyPermissions.requestPermissions(
                 this,
                 "You need to allow Activity Transition Permissions in order to recognize your activities",
-                REQUEST_CODE_ACTIVITY_TRANSITION,
+                Constants.REQUEST_CODE_ACTIVITY_TRANSITION,
                 Manifest.permission.ACTIVITY_RECOGNITION
             )
         }
@@ -425,12 +423,10 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
             binding.llDriverData.visibility = View.VISIBLE
             binding.btRider.text = "Stop Ride"
             binding.tvUserStatus.text = "Driving"
-            locationProvider.startLocationUpdates() // Start feeding GPS data
         } else {
             binding.llDriverData.visibility = View.GONE
             binding.btRider.text = "Start Ride"
-            binding.tvUserStatus.text = "Waiting for google Service"
-            locationProvider.stopLocationUpdates() // Stop feeding GPS data
+            binding.tvUserStatus.text = "Waiting for service..."
         }
 
         viewModel.isStartRide = !viewModel.isStartRide

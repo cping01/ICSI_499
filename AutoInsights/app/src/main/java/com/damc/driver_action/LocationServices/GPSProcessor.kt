@@ -9,7 +9,7 @@ import java.util.*
 import com.damc.driver_action.domain.models.TripMetrics
 import com.damc.driver_action.data.local.room.OnDataBaseActions
 
-class GPSProcessor {
+class GPSProcessor() {
 
 
 
@@ -29,7 +29,7 @@ class GPSProcessor {
                     sin(dLon / 2).pow(2.toDouble()) *
                     cos(originLat) * cos(destinationLat)
             val c = 2 * asin(sqrt(a))
-            return earthRadiusKm * c * 1000  // return distance in meters
+            return earthRadiusKm * c * 1000;  // return distance in meters
         }
     }
 
@@ -99,6 +99,16 @@ class GPSProcessor {
         return maxDistance
     }
 
+
+    // Helper Function to calculate center (replace with your logic)
+    private fun calculateCenter(points: List<GPSPoint>): GPSPoint {
+        // can implement averaging or a more sophisticated centroid calculation here
+        val sumLat = points.sumOf { it.latitude }
+        val sumLon = points.sumOf { it.longitude }
+        val avgLat = sumLat / points.size
+        val avgLon = sumLon / points.size
+        return GPSPoint(avgLat, avgLon, points[0].timestamp) // Use timestamp from any point
+    }
 
     fun processGPSPoints(points: List<GPSPoint>): List<GPSPoint> {
         var lastInferenceTime = System.currentTimeMillis()
@@ -335,22 +345,16 @@ class GPSProcessor {
         }
 
         // Update the average speed in the new TripMetrics
-        tripMetrics.averageSpeed = newAverageSpeed
+        tripMetrics.averageSpeed = (newAverageSpeed ?: tripMetrics.averageSpeed)
 
-        if (currentTripMetrics == null) {
-            // Insert a new TripMetrics record into the database
-            onDataBaseActions?.insertTripMetrics(tripMetrics)
-        } else {
-            // Update the existing TripMetrics record in the database
-            onDataBaseActions.updateTripMetrics(
-                maxSpeed = tripMetrics.maxSpeed,
-                averageSpeed = tripMetrics.averageSpeed,
-                tripDuration = tripMetrics.tripDuration,
-                tripDistance = tripMetrics.tripDistance,
-                speedingInstances = tripMetrics.speedingInstances,
-                hardAccelerationInstances = tripMetrics.hardAccelerationInstances,
-                hardBrakingInstances = tripMetrics.hardBrakingInstances, tripId)
-        }
+        // Update the TripMetrics in the database
+        onDataBaseActions?.updateTripMetrics(    maxSpeed = tripMetrics.maxSpeed,
+            averageSpeed = tripMetrics.averageSpeed,
+            tripDuration = tripMetrics.tripDuration,
+            tripDistance = tripMetrics.tripDistance,
+            speedingInstances = tripMetrics.speedingInstances,
+            hardAccelerationInstances = tripMetrics.hardAccelerationInstances,
+            hardBrakingInstances = tripMetrics.hardBrakingInstances, tripId)
 
         return metrics
     }

@@ -39,7 +39,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding, SettingsViewModel
                 viewModel.upDateUser(viewModel.users)
                 viewModel.preferenceRepository.saveBiometricEnabled(true)
             } else {
-                showToast("Device does not support biometrics", requireContext())
+                showToast("Device not Support Biometrics", requireContext())
                 binding.cbBiometrics.isChecked = false
             }
         }

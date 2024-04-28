@@ -1,6 +1,7 @@
 package com.damc.driver_action.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION
 import android.os.Environment
@@ -18,9 +19,12 @@ import com.damc.driver_action.domain.models.TripMetrics
 import com.damc.driver_action.utils.Utils.Companion.showToast
 import org.eazegraph.lib.charts.PieChart
 import org.eazegraph.lib.models.PieModel
+import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.File
+import java.io.FileReader
 import java.io.FileWriter
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -32,6 +36,7 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
     constructor(summerData: List<ActionData>?) : this(summerData ?: emptyList(), emptyList(), emptyList())
     constructor(tripMetricsData: List<TripMetrics>?, tripData: List<Trip>?) : this(emptyList(), tripMetricsData ?: emptyList(), tripData ?: emptyList())
 
+    private var dataToSave: String = ""
     var isShowMore = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SummaryAdapter.ViewHolder {
@@ -42,7 +47,6 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
 
 
     override fun onBindViewHolder(holder: SummaryAdapter.ViewHolder, position: Int) {
-        val tripMetrics: TripMetrics = if (position < tripMetricsData.size) tripMetricsData[position] else TripMetrics(0 ,0,0.0,0.0,0.0, 0.0, 0, 0, 0)
         holder.tvDate.text = android.icu.text.SimpleDateFormat("E MMM dd, yyyy", Locale.US)
             .format(Date())
         holder.tvHgSpeed.text = "${"%.1f".format(summerData[position].highestSpeed)} m/s"
@@ -61,6 +65,12 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
             }
             isShowMore = !isShowMore
         }
+
+
+        var totalAction =
+            summerData[position].hardStopCount + summerData[position].mediumAcceleration
+        +summerData[position].goodAcceleration + summerData[position].hardStopCount
+        +summerData[position].mediumStopCount + summerData[position].goodStopCount
 
         // Check if there are trip data for this position
         if (position < tripData.size) {
@@ -85,18 +95,10 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
             holder.tvHardBrakingInstances.text = "Hard Braking Instances: ${tripMetrics.hardBrakingInstances}"
         }
 
-
-        var totalAction =
-            tripMetrics.hardBrakingInstances + summerData[position].mediumAcceleration
-        +summerData[position].goodAcceleration + tripMetrics.hardAccelerationInstances
-        +summerData[position].mediumStopCount + summerData[position].goodStopCount
-
-
-
         holder.pieChart.addPieSlice(
             PieModel(
                 "Hard Acceleration",
-                tripMetrics.hardAccelerationInstances.toFloat(),
+                summerData[position].fastAcceleration.toFloat(),
                 holder.itemView.context.resources.getColor(R.color.hard_acceleration)
             )
         )
@@ -120,7 +122,7 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
         holder.pieChart.addPieSlice(
             PieModel(
                 "Hard Stop",
-                tripMetrics.hardBrakingInstances.toFloat(),
+                summerData[position].hardStopCount.toFloat(),
                 holder.itemView.context.resources.getColor(R.color.hard_stop)
             )
         )
@@ -144,19 +146,15 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
 
 
         holder.btSaveData.setOnClickListener {
-            val dataToSave =
+              dataToSave =
                 "----------------------START------------------------------\n " +
                         "Username - ${(holder.itemView.context.applicationContext as AssignmentApplication).getLoginUser().username}\n" +
-                        "Date - ${holder.tvDate1.text}\n" +
-                        "Trip Duration: ${tripMetrics.tripDuration} minutes\n" +
-                        "Trip Distance: ${tripMetrics.tripDistance}\nkm" +
                         "Total Driver Action count - ${totalAction}\n" +
-                        "Highest Speed -  ${tripMetrics.maxSpeed}\n" +
-                                "Speeding Instances: ${tripMetrics.speedingInstances}\n" +
-                                "Hard Stop Instances: ${tripMetrics.hardBrakingInstances}\n" +
+                        "Highest Speed -  ${summerData[position].highestSpeed}\n" +
+                        "Hard Stop Count - ${summerData[position].hardStopCount}\n" +
                         "Medium Stop Count - ${summerData[position].mediumStopCount}\n" +
                         "Good Stop Count - ${summerData[position].goodStopCount}\n" +
-                                "Hard Acceleration Instances: ${tripMetrics.hardAccelerationInstances}\n" +
+                        "Hard Acceleration Count - ${summerData[position].fastAcceleration}\n" +
                         "Medium Acceleration Count - ${summerData[position].mediumAcceleration}\n" +
                         "Good Acceleration Count - ${summerData[position].goodStopCount}\n" +
                         "-----------------------END------------------"
@@ -191,6 +189,50 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
         val btShowMore: TextView = itemView.findViewById(R.id.bt_show_more)
         val llMoreData: LinearLayout = itemView.findViewById(R.id.ll_more_data)
         val btSaveData: TextView = itemView.findViewById(R.id.bt_save_data)
+
+        val btnSendEmail: TextView = itemView.findViewById(R.id.bt_send_email)
+        init {
+            btnSendEmail.setOnClickListener { view ->
+                sendEmailAction(view.context)
+            }
+        }
+    }
+
+    private fun sendEmailAction(context: Context) {
+        // Read the content from the saved .txt file
+        val savedText = readSavedFileContent(context)
+
+        // Create an intent for sending email
+        val emailIntent = Intent(Intent.ACTION_SEND)
+        val dateFormat = SimpleDateFormat("yyyyMMddHHmm")
+        val currentDate = dateFormat.format(Calendar.getInstance().time)
+        emailIntent.type = "text/plain"
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "AutoInsights Data $currentDate")
+        emailIntent.putExtra(Intent.EXTRA_TEXT, dataToSave)
+
+        // Start the activity for sending email
+        context.startActivity(Intent.createChooser(emailIntent, "Send Email"))
+    }
+
+    private fun readSavedFileContent(context: Context): String {
+        val dateFormat = SimpleDateFormat("yyyyMMddHHmm")
+        val currentDate = dateFormat.format(Calendar.getInstance().time)
+        // Read the content from the saved .txt file
+        val file = File(context.getExternalFilesDir(null), "AutoInsights/AutoInsights Data $currentDate.txt")
+        val content = StringBuilder()
+
+        try {
+            val reader = BufferedReader(FileReader(file))
+            var line: String?
+            while (reader.readLine().also { line = it } != null) {
+                content.append(line).append("\n")
+            }
+            reader.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return content.toString()
     }
 
     fun saveTextFile(text: String?, context: Context) {
@@ -223,7 +265,7 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
                 fileNew =
                     File(
                         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                            .toString() + "/AutoInsights/" + currentDate + ".txt"
+                            .toString() + "/AutoInsights/" +"AutoInsights Data $currentDate" + ".txt"
                     )
             } else {
                 fileNew = File(

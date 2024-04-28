@@ -58,7 +58,7 @@ class HomeBaseFragment : BaseFragment<FragmentHomeBaseBinding, HomeBaseViewModel
     }
 
     private fun setCurrentFragment(fragment: Fragment) {
-        requireActivity().supportFragmentManager
+        requireActivity().getSupportFragmentManager()
             .beginTransaction()
             .replace(R.id.fl_fragment, fragment)
             .commit()
