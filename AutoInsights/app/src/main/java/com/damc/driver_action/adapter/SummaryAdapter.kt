@@ -49,7 +49,7 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
     override fun onBindViewHolder(holder: SummaryAdapter.ViewHolder, position: Int) {
         holder.tvDate.text = android.icu.text.SimpleDateFormat("E MMM dd, yyyy", Locale.US)
             .format(Date())
-        holder.tvHgSpeed.text = "${"%.1f".format(summerData[position].highestSpeed)} m/s"
+        holder.tvHgSpeed.text = "${"%.1f".format(summerData[position].highestSpeed)} km/h"
         holder.tvHstop.text = summerData[position].hardStopCount.toString()
         holder.tvFA.text = summerData[position].fastAcceleration.toString()
 
@@ -150,7 +150,7 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
                 "----------------------START------------------------------\n " +
                         "Username - ${(holder.itemView.context.applicationContext as AssignmentApplication).getLoginUser().username}\n" +
                         "Total Driver Action count - ${totalAction}\n" +
-                        "Highest Speed -  ${summerData[position].highestSpeed}\n" +
+                        "Highest Speed -  ${summerData[position].highestSpeed} " + "km/h\n" +
                         "Hard Stop Count - ${summerData[position].hardStopCount}\n" +
                         "Medium Stop Count - ${summerData[position].mediumStopCount}\n" +
                         "Good Stop Count - ${summerData[position].goodStopCount}\n" +

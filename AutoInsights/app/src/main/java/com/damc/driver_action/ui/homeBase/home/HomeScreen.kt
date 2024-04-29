@@ -228,7 +228,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         fmt.format(Locale.US, "%.1f", nCurrentSpeed)
         var strCurrentSpeed: String = fmt.toString()
         strCurrentSpeed = strCurrentSpeed.replace(' ', '0')
-        var strUnits = "m/s"
+        var strUnits = "km/h"
         try {
             viewModel.velocity.postValue(location?.speed)
             binding.tvVelocity.text = "$strCurrentSpeed $strUnits"
