@@ -38,7 +38,7 @@ class LocalRepositoryImpl(val dataBase: OnDataBaseActions) : LocalRepostories {
         }
     }
 
-    override suspend fun getTripMetrics(tripId: Int, userId: Int): LiveData<List<TripMetrics>> {
+    override suspend fun getTripMetrics(tripId: Int, userId: Int): List<TripMetrics> {
         try {
             return dataBase.getTripMetrics(tripId, userId)
         } catch (e: Exception) {
@@ -49,7 +49,7 @@ class LocalRepositoryImpl(val dataBase: OnDataBaseActions) : LocalRepostories {
 
 
 
-    override fun getTrips(tripId: Int,userId: Int): LiveData<List<Trip>> {
+    override fun getTrips(tripId: Int,userId: Int): List<Trip> {
         try {
             return dataBase.getTrips(tripId,userId)
         } catch (e: Exception) {
@@ -58,9 +58,28 @@ class LocalRepositoryImpl(val dataBase: OnDataBaseActions) : LocalRepostories {
         }
     }
 
-    override suspend fun getLatestTrip(): Trip {
+    override suspend fun getTripMetricsForTripId(tripId: Int): TripMetrics {
         try {
-        return dataBase.getLatestTrip()
+            return dataBase.getTripMetricsForTripId(tripId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+    }
+
+    override suspend fun getLatestTripMetrics(userId: Int): TripMetrics {
+        try {
+            return dataBase.getLatestTripMetrics(userId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+    }
+
+
+    override suspend fun getLatestTrip(userId: Int): Trip {
+        try {
+        return dataBase.getLatestTrip(userId)
     } catch (e: Exception) {
         e.printStackTrace()
         throw e
@@ -98,6 +117,15 @@ class LocalRepositoryImpl(val dataBase: OnDataBaseActions) : LocalRepostories {
     override suspend fun dateIsRegisteredInDb(userID: Int, date: String): ActionData {
         try {
             return dataBase.dateIsRegisteredInDb(userID, date)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+    }
+
+    override suspend fun getTripForUserAndDate(userID: Int, date: String): Trip {
+        try {
+            return dataBase.getTripForUserAndDate(userID, date)
         } catch (e: Exception) {
             e.printStackTrace()
             throw e

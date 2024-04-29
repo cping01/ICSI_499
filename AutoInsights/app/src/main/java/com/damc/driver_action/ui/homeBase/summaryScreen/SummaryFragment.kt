@@ -1,6 +1,7 @@
 package com.damc.driver_action.ui.homeBase.summaryScreen
 
 import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -37,54 +38,45 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding, SummaryViewModel>()
 
     override fun onReady(savedInstanceState: Bundle?) {
         binding.rvSummary.layoutManager = LinearLayoutManager(requireContext())
+        viewModel.adapter = SummaryAdapter(emptyList(), emptyList(), emptyList())
+        binding.rvSummary.adapter = viewModel.adapter
         val databaseClient = DatabaseClient(context)
         val appDatabase = databaseClient.getAppDatabase()
         val onDataBaseActions = appDatabase?.OnDataBaseActions()
-
-
 
         val userId = (requireActivity().application as AssignmentApplication).getLoginUser().userId
 
         lifecycleScope.launch {
             val latestTrip = withContext(Dispatchers.IO) {
-                onDataBaseActions?.getLatestTrip()
+                onDataBaseActions?.getLatestTrip(userId)
             }
             val tripId = latestTrip?.id
+            Log.d("SummaryFragment", "tripId: $tripId")
 
             if (tripId != null) {
-                viewModel.getTripData(tripId ,userId)
-                viewModel.getTripMetricsData(tripId ,userId)
+                viewModel.getActionData(userId)
+                viewModel.getTripData(tripId, userId)
+                viewModel.getTripMetricsData(tripId, userId)
+
+                viewModel.actionData.observe(viewLifecycleOwner) { actionData ->
+                    Log.d("SummaryFragment", "actionData: $actionData")
+                    viewModel.tripData.observe(viewLifecycleOwner) { trips ->
+                        Log.d("SummaryFragment", "trips: $trips")
+                        viewModel.tripMetricsData.observe(viewLifecycleOwner) { tripMetrics ->
+                            Log.d("SummaryFragment", "tripMetrics: $tripMetrics")
+                            // Update the data in the adapter
+                            viewModel.adapter.updateData(
+                                actionData ?: emptyList(),
+                                trips ?: emptyList(),
+                                tripMetrics ?: emptyList()
+                            )
+                            Log.d("SummaryFragment", "SummaryAdapter is set to the RecyclerView")
+                        }
+                    }
+                }
             }
         }
 
-        val combinedData = MediatorLiveData<Pair<List<Trip>?, List<TripMetrics>?>>().apply {
-            var trips: List<Trip>? = null
-            var tripMetrics: List<TripMetrics>? = null
-
-            addSource(viewModel.tripData) { newTrips ->
-                trips = newTrips
-                value = Pair(trips, tripMetrics)
-            }
-
-            addSource(viewModel.tripMetricsData) { newTripMetrics ->
-                tripMetrics = newTripMetrics
-                value = Pair(trips, tripMetrics)
-            }
-        }
-
-        combinedData.observe(this, Observer { (trips, tripMetrics) ->
-            if (trips != null && tripMetrics != null) {
-                viewModel.adapter = SummaryAdapter(tripMetrics, trips)
-                binding.rvSummary.adapter = viewModel.adapter
-            }
-        })
-
-        viewModel.getActionData(userId)
-
-        viewModel.actionData.observe(this, Observer {
-            viewModel.adapter = SummaryAdapter(viewModel.actionData.value!!)
-            binding.rvSummary.adapter = viewModel.adapter
-        })
+        Log.d("SummaryFragment", "getActionData is called")
     }
-
 }

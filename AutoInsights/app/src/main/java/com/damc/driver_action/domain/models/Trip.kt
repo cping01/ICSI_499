@@ -18,4 +18,5 @@ data class Trip(
     val id: Int = 0,
     @ColumnInfo(name = "Date")
     val date: Date = Date()
-)
+) {
+}

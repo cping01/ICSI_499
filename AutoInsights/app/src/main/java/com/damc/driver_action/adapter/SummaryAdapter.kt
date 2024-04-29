@@ -30,12 +30,13 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class SummaryAdapter(private var summerData: List<ActionData>, private var tripMetricsData: List<TripMetrics>, private var tripData: List<Trip>) :
+class SummaryAdapter(private var summerData: List<ActionData>, private var tripData: List<Trip>, private var tripMetricsData: List<TripMetrics>) :
     RecyclerView.Adapter<SummaryAdapter.ViewHolder>() {
 
-    constructor(summerData: List<ActionData>?) : this(summerData ?: emptyList(), emptyList(), emptyList())
-    constructor(tripMetricsData: List<TripMetrics>?, tripData: List<Trip>?) : this(emptyList(), tripMetricsData ?: emptyList(), tripData ?: emptyList())
-
+    // Declare the variables
+    private var actionData: List<ActionData> = listOf()
+    private var trips: List<Trip> = listOf()
+    private var tripMetrics: List<TripMetrics> = listOf()
     private var dataToSave: String = ""
     var isShowMore = false
 
@@ -83,16 +84,15 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
 
         // Check if there are trip metrics for this position
         if (position < tripMetricsData.size) {
-            val tripMetrics = tripMetricsData[position]
 
             // Display the trip metrics data
-            holder.tvMaxSpeed.text = "Max Speed: ${tripMetrics.maxSpeed} kph"
-            holder.tvAverageSpeed.text = "Average Speed: ${tripMetrics.averageSpeed} kph"
-            holder.tvTripDuration.text = "Trip Duration: ${tripMetrics.tripDuration} minutes"
-            holder.tvTripDistance.text = "Trip Distance: ${tripMetrics.tripDistance} km"
-            holder.tvSpeedingInstances.text = "Speeding Instances: ${tripMetrics.speedingInstances}"
-            holder.tvHardAccelerationInstances.text = "Hard Acceleration Instances: ${tripMetrics.hardAccelerationInstances}"
-            holder.tvHardBrakingInstances.text = "Hard Braking Instances: ${tripMetrics.hardBrakingInstances}"
+            holder.tvMaxSpeed.text = "Max Speed: ${tripMetricsData[position].maxSpeed} mph"
+            holder.tvAverageSpeed.text = "Average Speed: ${tripMetricsData[position].averageSpeed} mph"
+            holder.tvTripDuration.text = "Trip Duration: ${tripMetricsData[position].tripDuration} minutes"
+            holder.tvTripDistance.text = "Trip Distance: ${tripMetricsData[position].tripDistance} miles"
+            holder.tvSpeedingInstances.text = "Speeding Instances: ${tripMetricsData[position].speedingInstances}"
+            holder.tvHardAccelerationInstances.text = "Hard Acceleration Instances: ${tripMetricsData[position].hardAccelerationInstances}"
+            holder.tvHardBrakingInstances.text = "Hard Braking Instances: ${tripMetricsData[position].hardBrakingInstances}"
         }
 
         holder.pieChart.addPieSlice(
@@ -149,8 +149,13 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
               dataToSave =
                 "----------------------START------------------------------\n " +
                         "Username - ${(holder.itemView.context.applicationContext as AssignmentApplication).getLoginUser().username}\n" +
+                        "Date - ${holder.tvDate.text}\n" +
                         "Total Driver Action count - ${totalAction}\n" +
+                        "Trip Duration: ${tripMetricsData[position].tripDuration} minutes" +
+                        "Trip Distance: ${tripMetricsData[position].tripDistance} miles" +
                         "Highest Speed -  ${summerData[position].highestSpeed}\n" +
+                        "Average Speed: ${tripMetricsData[position].averageSpeed} mph\n" +
+                        "Speeding Instances: ${tripMetricsData[position].speedingInstances}" +
                         "Hard Stop Count - ${summerData[position].hardStopCount}\n" +
                         "Medium Stop Count - ${summerData[position].mediumStopCount}\n" +
                         "Good Stop Count - ${summerData[position].goodStopCount}\n" +
@@ -161,6 +166,14 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripM
 
             saveTextFile(dataToSave, holder.itemView.context)
         }
+    }
+
+    fun updateData(actionData: List<ActionData>, trips: List<Trip>, tripMetrics: List<TripMetrics>) {
+        // Update the data and notify the adapter
+        this.actionData = actionData
+        this.trips = trips
+        this.tripMetrics = tripMetrics
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {

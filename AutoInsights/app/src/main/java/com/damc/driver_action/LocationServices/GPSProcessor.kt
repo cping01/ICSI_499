@@ -8,8 +8,9 @@ import kotlin.Pair
 import java.util.*
 import com.damc.driver_action.domain.models.TripMetrics
 import com.damc.driver_action.data.local.room.OnDataBaseActions
+import com.damc.driver_action.domain.LocalRepostories
 
-class GPSProcessor() {
+class GPSProcessor(private val database: LocalRepostories) {
 
 
 
@@ -326,35 +327,38 @@ class GPSProcessor() {
         val segments = CalculateSegment(projectedTrajectory)
         val metrics = calculateMetrics(segments)
         val tripMetrics = tripSummaryToTripMetrics(userId ,metrics)
-        val databaseClient = DatabaseClient(context)
-        val appDatabase = databaseClient.getAppDatabase()
-        val onDataBaseActions = appDatabase?.OnDataBaseActions()
 
         // Retrieve the current TripMetrics for the trip
-        val currentTripMetricsLiveData = onDataBaseActions?.getTripMetrics(tripId, userId)
-        val currentTripMetrics = currentTripMetricsLiveData?.value?.firstOrNull()
+        val currentTripMetricsLiveData = database.getTripMetrics(tripId, userId)
+        val currentTripMetrics = currentTripMetricsLiveData?.firstOrNull()
 
-        // Calculate the new average speed
-        val totalDistance: Double? = currentTripMetrics?.tripDistance?.plus(metrics.tripDistance)
-        val totalDuration: Double? = currentTripMetrics?.tripDuration?.plus(metrics.tripDuration)
-        val newAverageSpeed = if (totalDuration != null && totalDistance != null) {
-            totalDistance / totalDuration
+        if (currentTripMetrics == null) {
+            // If the TripMetrics for the current trip doesn't exist, insert a new TripMetrics into the database
+            database?.insertTripMetrics(tripMetrics)
         } else {
-            // Handle the case where totalDuration or totalDistance is null
-            0.0
+            // If the TripMetrics for the current trip exists, update the existing TripMetrics
+            val totalDistance: Double? = currentTripMetrics.tripDistance?.plus(metrics.tripDistance)
+            val totalDuration: Double? = currentTripMetrics.tripDuration?.plus(metrics.tripDuration)
+            val newAverageSpeed = if (totalDuration != null && totalDistance != null) {
+                totalDistance / totalDuration
+            } else {
+                // Handle the case where totalDuration or totalDistance is null
+                0.0
+            }
+
+            // Update the average speed in the new TripMetrics
+            tripMetrics.averageSpeed = (newAverageSpeed ?: tripMetrics.averageSpeed)
+
+            // Update the TripMetrics in the database
+            database?.updateTripMetrics(
+                maxSpeed = tripMetrics.maxSpeed,
+                averageSpeed = tripMetrics.averageSpeed,
+                tripDuration = tripMetrics.tripDuration,
+                tripDistance = tripMetrics.tripDistance,
+                speedingInstances = tripMetrics.speedingInstances,
+                hardAccelerationInstances = tripMetrics.hardAccelerationInstances,
+                hardBrakingInstances = tripMetrics.hardBrakingInstances, tripId)
         }
-
-        // Update the average speed in the new TripMetrics
-        tripMetrics.averageSpeed = (newAverageSpeed ?: tripMetrics.averageSpeed)
-
-        // Update the TripMetrics in the database
-        onDataBaseActions?.updateTripMetrics(    maxSpeed = tripMetrics.maxSpeed,
-            averageSpeed = tripMetrics.averageSpeed,
-            tripDuration = tripMetrics.tripDuration,
-            tripDistance = tripMetrics.tripDistance,
-            speedingInstances = tripMetrics.speedingInstances,
-            hardAccelerationInstances = tripMetrics.hardAccelerationInstances,
-            hardBrakingInstances = tripMetrics.hardBrakingInstances, tripId)
 
         return metrics
     }

@@ -13,12 +13,21 @@ import com.damc.driver_action.domain.models.TripMetrics
 @Dao
 interface OnDataBaseActions {
 
-    @Query("SELECT * FROM trip ORDER BY trip_id DESC LIMIT 1")
-    suspend fun getLatestTrip(): Trip
+    @Query("SELECT * FROM trip WHERE user_id LIKE :userID AND date LIKE :date LIMIT 1")
+    suspend fun getTripForUserAndDate(userID: Int, date: String): Trip
+
+    @Query("SELECT * FROM trip_metrics WHERE trip_id LIKE :tripId LIMIT 1")
+    suspend fun getTripMetricsForTripId(tripId: Int): TripMetrics
+
+    @Query("SELECT * FROM trip WHERE user_id = :userId ORDER BY trip_id DESC LIMIT 1")
+    suspend fun getLatestTrip(userId: kotlin.Int): Trip
+
+    @Query("SELECT * FROM trip_metrics WHERE user_id = :userId ORDER BY trip_id DESC LIMIT 1")
+    suspend fun getLatestTripMetrics(userId: kotlin.Int): TripMetrics
     @Query("SELECT * FROM trip_metrics WHERE trip_id = :tripId AND user_id = :userId")
-    fun getTripMetrics(tripId: Int, userId: Int): LiveData<List<TripMetrics>>
+    fun getTripMetrics(tripId: Int, userId: Int): List<TripMetrics>
     @Query("SELECT * FROM trip WHERE trip_id = :tripId AND user_id = :userId")
-    fun getTrips(tripId: Int, userId: Int): LiveData<List<Trip>>
+    fun getTrips(tripId: Int, userId: Int): List<Trip>
 
     @Insert
     suspend fun insertUser(users: Users)
@@ -31,7 +40,6 @@ interface OnDataBaseActions {
 
     @Query("UPDATE trip_metrics SET maxSpeed = :maxSpeed, averageSpeed = :averageSpeed, tripDuration = :tripDuration, tripDistance = :tripDistance, speedingInstances = :speedingInstances, hardAccelerationInstances = :hardAccelerationInstances, hardBrakingInstances = :hardBrakingInstances WHERE trip_id = :tripId")
     suspend fun updateTripMetrics(maxSpeed: Double, averageSpeed: Double, tripDuration: Double, tripDistance: Double, speedingInstances: Int, hardAccelerationInstances: Int, hardBrakingInstances: Int, tripId: Int)
-
 
     @Query("SELECT COUNT(*) FROM users WHERE username LIKE :username LIMIT 1")
     fun isUsernameInDb(username: String): Int

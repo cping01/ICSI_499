@@ -1,24 +1,32 @@
 package com.damc.driver_action.ui.homeBase.home
 
 import android.os.CountDownTimer
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.damc.driver_action.accelerationHelper.Accelerometer
+import com.damc.driver_action.app.AssignmentApplication
 import com.damc.driver_action.common.Constants.FAST_ACCELARATION
 import com.damc.driver_action.common.Constants.GOOD_ACCELARATION
 import com.damc.driver_action.common.Constants.MEDIUM_ACCELARATION
 import com.damc.driver_action.domain.LocalRepostories
 import com.damc.driver_action.domain.models.ActionData
+import com.damc.driver_action.domain.models.Trip
+import com.damc.driver_action.domain.models.TripMetrics
 import com.damc.driver_action.domain.models.Users
 import com.damc.driver_action.ui.BaseViewModel
 import kotlinx.coroutines.launch
 
 class HomeScreenViewModel(
     val accelerometer: Accelerometer,
-    val localRepostories: LocalRepostories
+    val localRepostories: LocalRepostories,
+
 ) :
     BaseViewModel() {
 
+
+    lateinit var tripsMetrics: TripMetrics
+    lateinit var trips: Trip
     var acceleration = MutableLiveData<Float>()
     var velocity = MutableLiveData<Float>()
     var lastSecondAcceleration = 0.0f
@@ -37,6 +45,9 @@ class HomeScreenViewModel(
     var isStartRide = false
 
     lateinit var users: Users
+
+
+
 
 
     fun checkFastAccOrHardStop() {

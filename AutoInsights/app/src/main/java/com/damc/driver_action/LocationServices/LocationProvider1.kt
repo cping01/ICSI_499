@@ -9,21 +9,27 @@ import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import com.damc.driver_action.LocationServices.GPSPoint
 import com.damc.driver_action.LocationServices.GPSProcessor
+import com.damc.driver_action.app.AssignmentApplication
 import com.damc.driver_action.data.local.room.DatabaseClient
 import com.damc.driver_action.domain.models.Trip
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Date
 
 class LocationProvider1(private val context: Context, private val gpsProcessor: GPSProcessor, private val userId: Int) {
-    private var currentTripId: Long = 0
+    private var currentTripId: Int = 0
     private var isTripStarted = false
     suspend fun startNewTrip() {
+        val application = context.applicationContext as AssignmentApplication
+        val currentTrip = application.getTrip()
+        val currentTripMetrics = application.getTripMetrics()
         val databaseClient = DatabaseClient(context)
         val appDatabase = databaseClient.getAppDatabase()
         val onDataBaseActions = appDatabase?.OnDataBaseActions()
-        val newTrip = Trip(userId = userId ,date = Date()) // Set the date and time of the trip
-        currentTripId = onDataBaseActions?.insertTrip(newTrip) ?: 0
+        onDataBaseActions?.insertTrip(Trip(userId = userId ,date = Date())) // Set the date and time of the trip
+        currentTripId = onDataBaseActions?.getLatestTrip(userId)?.id  ?: 0
     }
 
     private val locationManager: LocationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -38,7 +44,9 @@ class LocationProvider1(private val context: Context, private val gpsProcessor: 
             if (gpsPoints.size >= SOME_THRESHOLD) {
                 GlobalScope.launch {
                     if (!isTripStarted) {
-                        startNewTrip() // Start a new trip before calculating metrics
+                        withContext(Dispatchers.IO) {
+                            startNewTrip() // Start a new trip before calculating metrics
+                        }
                         isTripStarted = true
                     }
                     gpsProcessor.calculateAllMetrics(context, gpsPoints.toList(), currentTripId.toInt(), userId)

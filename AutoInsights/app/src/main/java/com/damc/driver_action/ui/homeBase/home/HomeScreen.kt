@@ -1,5 +1,6 @@
 package com.damc.driver_action.ui.homeBase.home
 
+import LocationProvider1
 import android.Manifest
 import android.app.PendingIntent
 import android.content.Context
@@ -13,8 +14,11 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import com.damc.driver_action.LocationServices.GPSProcessor
 import com.damc.driver_action.R
 import com.damc.driver_action.accelerationHelper.Accelerometer
 import com.damc.driver_action.activityTrackingHelper.ActivityTransitionReceiver
@@ -23,7 +27,10 @@ import com.damc.driver_action.activityTrackingHelper.OnActivityReceived
 import com.damc.driver_action.app.AssignmentApplication
 import com.damc.driver_action.common.Constants
 import com.damc.driver_action.common.Constants.REQUEST_CODE_ACTIVITY_TRANSITION
+import com.damc.driver_action.data.local.room.DatabaseClient
 import com.damc.driver_action.databinding.FragmentHomeScreenBinding
+import com.damc.driver_action.domain.models.Trip
+import com.damc.driver_action.domain.models.TripMetrics
 import com.damc.driver_action.domain.models.Users
 import com.damc.driver_action.ui.BaseFragment
 import com.damc.driver_action.utils.Utils
@@ -31,7 +38,11 @@ import com.damc.driver_action.velocityHelper.CLocation
 import com.damc.driver_action.velocityHelper.IBaseGpsListener
 import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityRecognitionClient
+import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -42,6 +53,11 @@ import java.util.Locale
 
 class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(),
     EasyPermissions.PermissionCallbacks, IBaseGpsListener, OnActivityReceived {
+
+
+
+    // Declare locationProvider1 without initializing it
+    private lateinit var locationProvider1: LocationProvider1
 
     val TAG = HomeScreen::class.java.simpleName
 
@@ -86,12 +102,24 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         }
 
     override fun onReady(savedInstanceState: Bundle?) {
+        lifecycleScope.launch { // Launch a new coroutine in lifecycleScope
+            val application = context?.applicationContext as AssignmentApplication
+            val gpsProcessor = GPSProcessor(application.database)
+        val userId = (requireActivity().application as AssignmentApplication).getLoginUser().userId
+        locationProvider1 = LocationProvider1(requireContext(), gpsProcessor, userId)
+        withContext(Dispatchers.Main) {
+            viewModel.users =
+                (requireActivity().application as AssignmentApplication).getLoginUser()
 
-        viewModel.users = (requireActivity().application as AssignmentApplication).getLoginUser()
+            viewModel.actionData =
+                (requireActivity().application as AssignmentApplication).getActionData()!!
+            viewModel.trips =
+                (requireActivity().application as AssignmentApplication).getTrip()!!
+            viewModel.tripsMetrics =
+                (requireActivity().application as AssignmentApplication).getTripMetrics()!!
 
-        viewModel.actionData =
-            (requireActivity().application as AssignmentApplication).getActionData()!!
-
+        }
+    }
         viewModel.topSpeed = viewModel.actionData.highestSpeed
 
         client = ActivityRecognition.getClient(requireActivity())
@@ -108,8 +136,8 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                 binding.tvAcceleration.text = "${"%.1f".format(acceleration)} m/s*s"
                 viewModel.checkFastAccOrHardStop()
             }
-
         })
+
 
         setActivityClient()
 
@@ -190,10 +218,31 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
             binding.btRider.visibility = View.GONE
             binding.llDriverData.visibility = View.VISIBLE
             binding.tvUserStatus.text = "Waiting for service..."
+
+            // Start location updates when auto trip detection is on and the user is in a vehicle
+            activityTransitionReceiver = object : ActivityTransitionReceiver() {
+                override fun onReceive(context: Context, intent: Intent) {
+                    if (ActivityTransitionResult.hasResult(intent)) {
+                        val result = ActivityTransitionResult.extractResult(intent)
+                        result?.let {
+                            result.transitionEvents.forEach { event ->
+                                if (ActivityTransitionsUtil.toActivityString(event.activityType) == "In_Vehicle" && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
+                                    locationProvider1.startLocationUpdates()
+                                } else if (ActivityTransitionsUtil.toActivityString(event.activityType) == "In_Vehicle" && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_EXIT) {
+                                    locationProvider1.stopLocationUpdates()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         } else {
             binding.btRider.visibility = View.VISIBLE
             binding.llDriverData.visibility = View.GONE
             binding.tvUserStatus.text = "Waiting for service..."
+
+            // Stop location updates when auto trip detection is off
+            locationProvider1.stopLocationUpdates()
         }
     }
 
@@ -273,6 +322,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
+
                 this.updateSpeed(null)
             }
         }
@@ -423,10 +473,16 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
             binding.llDriverData.visibility = View.VISIBLE
             binding.btRider.text = "Stop Ride"
             binding.tvUserStatus.text = "Driving"
+
+            // Start location updates when the "Start Ride" button is pressed
+            locationProvider1.startLocationUpdates()
         } else {
             binding.llDriverData.visibility = View.GONE
             binding.btRider.text = "Start Ride"
             binding.tvUserStatus.text = "Waiting for service..."
+
+            // Stop location updates when the "End Trip" button is pressed
+            locationProvider1.stopLocationUpdates()
         }
 
         viewModel.isStartRide = !viewModel.isStartRide
