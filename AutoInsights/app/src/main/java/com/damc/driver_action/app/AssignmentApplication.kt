@@ -31,6 +31,12 @@ class AssignmentApplication : Application() {
             AppDataBase::class.java, "database-name"
         ).build()
 
+        startKoin {
+            androidLogger()
+            androidContext(this@AssignmentApplication)
+            modules(appModule)
+        }
+
         database = LocalRepositoryImpl(appDatabase.OnDataBaseActions())
     }
 
