@@ -73,27 +73,6 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripD
         +summerData[position].goodAcceleration + summerData[position].hardStopCount
         +summerData[position].mediumStopCount + summerData[position].goodStopCount
 
-        // Check if there are trip data for this position
-        if (position < tripData.size) {
-            val trip = tripData[position]
-
-            // Display the trip data
-            holder.tvDate1.text = trip.date.toString()
-            holder.tvTripId.text = "Trip ID: ${trip.id}"
-        }
-
-        // Check if there are trip metrics for this position
-        if (position < tripMetricsData.size) {
-
-            // Display the trip metrics data
-            holder.tvMaxSpeed.text = "Max Speed: ${tripMetricsData[position].maxSpeed} mph"
-            holder.tvAverageSpeed.text = "Average Speed: ${tripMetricsData[position].averageSpeed} mph"
-            holder.tvTripDuration.text = "Trip Duration: ${tripMetricsData[position].tripDuration} minutes"
-            holder.tvTripDistance.text = "Trip Distance: ${tripMetricsData[position].tripDistance} miles"
-            holder.tvSpeedingInstances.text = "Speeding Instances: ${tripMetricsData[position].speedingInstances}"
-            holder.tvHardAccelerationInstances.text = "Hard Acceleration Instances: ${tripMetricsData[position].hardAccelerationInstances}"
-            holder.tvHardBrakingInstances.text = "Hard Braking Instances: ${tripMetricsData[position].hardBrakingInstances}"
-        }
 
         holder.pieChart.addPieSlice(
             PieModel(
@@ -182,18 +161,7 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripD
 
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // Add TextViews for the trip metrics
-        //new data
-        val tvDate1: TextView = itemView.findViewById(R.id.tv_date1)
-        val tvTripId: TextView = itemView.findViewById(R.id.tv_trip_id)
-        val tvMaxSpeed: TextView = itemView.findViewById(R.id.tv_max_speed)
-        val tvAverageSpeed: TextView = itemView.findViewById(R.id.tv_average_speed)
-        val tvTripDuration: TextView = itemView.findViewById(R.id.tv_trip_duration)
-        val tvTripDistance: TextView = itemView.findViewById(R.id.tv_trip_distance)
-        val tvSpeedingInstances: TextView = itemView.findViewById(R.id.tv_speeding_instances)
-        val tvHardAccelerationInstances: TextView = itemView.findViewById(R.id.tv_hard_acceleration_instances)
-        val tvHardBrakingInstances: TextView = itemView.findViewById(R.id.tv_hard_braking_instances)
-        //old
+
         val tvDate: TextView = itemView.findViewById(R.id.tv_date)
         val tvHgSpeed: TextView = itemView.findViewById(R.id.tv_highest_speed)
         val tvHstop: TextView = itemView.findViewById(R.id.tv_hard_stop_count)
