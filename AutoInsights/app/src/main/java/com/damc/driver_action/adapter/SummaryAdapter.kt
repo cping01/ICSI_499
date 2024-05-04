@@ -147,22 +147,22 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripD
 
         holder.btSaveData.setOnClickListener {
               dataToSave =
-                "----------------------START------------------------------\n " +
-                        "Username - ${(holder.itemView.context.applicationContext as AssignmentApplication).getLoginUser().username}\n" +
-                        "Date - ${holder.tvDate.text}\n" +
-                        "Total Driver Action count - ${totalAction}\n" +
-                        "Trip Duration: ${tripMetricsData[position].tripDuration} minutes" +
-                        "Trip Distance: ${tripMetricsData[position].tripDistance} miles" +
-                        "Highest Speed -  ${summerData[position].highestSpeed}\n" +
-                        "Average Speed: ${tripMetricsData[position].averageSpeed} mph\n" +
-                        "Speeding Instances: ${tripMetricsData[position].speedingInstances}" +
-                        "Hard Stop Count - ${summerData[position].hardStopCount}\n" +
-                        "Medium Stop Count - ${summerData[position].mediumStopCount}\n" +
-                        "Good Stop Count - ${summerData[position].goodStopCount}\n" +
-                        "Hard Acceleration Count - ${summerData[position].fastAcceleration}\n" +
-                        "Medium Acceleration Count - ${summerData[position].mediumAcceleration}\n" +
-                        "Good Acceleration Count - ${summerData[position].goodStopCount}\n" +
-                        "-----------------------END------------------"
+                        "--------------------START--------------------\n " +
+                        "Username : ${(holder.itemView.context.applicationContext as AssignmentApplication).getLoginUser().username}\n" +
+                        "Date : ${holder.tvDate.text}\n" +
+                        "Total Driver Action Count : ${totalAction}\n" +
+                        "Trip Duration : ${tripMetricsData[position].tripDuration} minutes" +
+                        "Trip Distance : ${tripMetricsData[position].tripDistance} miles" +
+                        "Highest Speed :  ${summerData[position].highestSpeed} kph\n" +
+                        "Average Speed : ${tripMetricsData[position].averageSpeed} mph\n" +
+                        "Speeding Count : ${tripMetricsData[position].speedingInstances}" +
+                        "Hard Stop Count : ${summerData[position].hardStopCount}\n" +
+                        "Medium Stop Count : ${summerData[position].mediumStopCount}\n" +
+                        "Good Stop Count : ${summerData[position].goodStopCount}\n" +
+                        "Hard Acceleration Count : ${summerData[position].fastAcceleration}\n" +
+                        "Medium Acceleration Count : ${summerData[position].mediumAcceleration}\n" +
+                        "Good Acceleration Count : ${summerData[position].goodStopCount}\n" +
+                        "---------------------END---------------------"
 
             saveTextFile(dataToSave, holder.itemView.context)
         }
