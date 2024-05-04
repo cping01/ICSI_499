@@ -1,5 +1,6 @@
 package com.damc.driver_action.adapter
 
+import android.content.ContentProvider
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -10,13 +11,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.damc.driver_action.R
 import com.damc.driver_action.app.AssignmentApplication
 import com.damc.driver_action.domain.models.ActionData
 import com.damc.driver_action.domain.models.Trip
 import com.damc.driver_action.domain.models.TripMetrics
+import com.damc.driver_action.ui.homeBase.summaryScreen.SummaryFragment
 import com.damc.driver_action.utils.Utils.Companion.showToast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.eazegraph.lib.charts.PieChart
 import org.eazegraph.lib.models.PieModel
 import java.io.BufferedReader
@@ -29,6 +36,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+
 
 class SummaryAdapter(private var summerData: List<ActionData>, private var tripData: List<Trip>, private var tripMetricsData: List<TripMetrics>) :
     RecyclerView.Adapter<SummaryAdapter.ViewHolder>() {
@@ -72,6 +80,9 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripD
             summerData[position].hardStopCount + summerData[position].mediumAcceleration
         +summerData[position].goodAcceleration + summerData[position].hardStopCount
         +summerData[position].mediumStopCount + summerData[position].goodStopCount
+
+
+
 
 
         holder.pieChart.addPieSlice(
@@ -125,26 +136,38 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripD
 
 
         holder.btSaveData.setOnClickListener {
-              dataToSave =
-                        "--------------------START--------------------\n " +
-                        "Username : ${(holder.itemView.context.applicationContext as AssignmentApplication).getLoginUser().username}\n" +
-                        "Date : ${holder.tvDate.text}\n" +
-                        "Total Driver Action Count : ${totalAction}\n" +
-                        "Trip Duration : ${tripMetricsData[position].tripDuration} minutes" +
-                        "Trip Distance : ${tripMetricsData[position].tripDistance} miles" +
-                        "Highest Speed :  ${summerData[position].highestSpeed} kph\n" +
-                        "Average Speed : ${tripMetricsData[position].averageSpeed} mph\n" +
-                        "Speeding Count : ${tripMetricsData[position].speedingInstances}" +
-                        "Hard Stop Count : ${summerData[position].hardStopCount}\n" +
-                        "Medium Stop Count : ${summerData[position].mediumStopCount}\n" +
-                        "Good Stop Count : ${summerData[position].goodStopCount}\n" +
-                        "Hard Acceleration Count : ${summerData[position].fastAcceleration}\n" +
-                        "Medium Acceleration Count : ${summerData[position].mediumAcceleration}\n" +
-                        "Good Acceleration Count : ${summerData[position].goodStopCount}\n" +
-                        "---------------------END---------------------"
+            val application = holder.itemView.context.applicationContext as AssignmentApplication
 
-            saveTextFile(dataToSave, holder.itemView.context)
+
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val userid = application.getLoginUser().userId
+                val tripMetrics = application.database.getLatestTripMetrics(userid)
+
+                withContext(Dispatchers.Main) {
+                    dataToSave =
+                                "--------------------START--------------------\n " +
+                                "Username - ${application.getLoginUser().username}\n" +
+                                "Date - ${holder.tvDate.text}\n" +
+                                "Total Driver Action count - ${totalAction}\n" +
+                                "Trip Duration : " + tripMetrics.tripDuration + " minutes\n" +
+                                "Trip Distance : "+ tripMetrics.tripDistance + " miles\n" +
+                                "Highest Speed : " + tripMetrics.maxSpeed +" mph \n" +
+                                "Average Speed : "+ tripMetrics.averageSpeed + " mph\n" +
+                                "Speeding Instances : " + tripMetrics.speedingInstances + "\n" +
+                                "Hard Stop Count : ${summerData[position].hardStopCount}\n" +
+                                "Medium Stop Count : ${summerData[position].mediumStopCount}\n" +
+                                "Good Stop Count : ${summerData[position].goodStopCount}\n" +
+                                "Hard Acceleration Count : ${summerData[position].fastAcceleration}\n" +
+                                "Medium Acceleration Count : ${summerData[position].mediumAcceleration}\n" +
+                                "Good Acceleration Count : ${summerData[position].goodStopCount}\n" +
+                                "--------------------END--------------------"
+
+                    saveTextFile(dataToSave, holder.itemView.context)
+                }
+            }
         }
+
     }
 
     fun updateData(actionData: List<ActionData>, trips: List<Trip>, tripMetrics: List<TripMetrics>) {
@@ -162,6 +185,11 @@ class SummaryAdapter(private var summerData: List<ActionData>, private var tripD
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+
+        // Add TextViews for the trip metrics
+        //new data
+
+        //old
         val tvDate: TextView = itemView.findViewById(R.id.tv_date)
         val tvHgSpeed: TextView = itemView.findViewById(R.id.tv_highest_speed)
         val tvHstop: TextView = itemView.findViewById(R.id.tv_hard_stop_count)

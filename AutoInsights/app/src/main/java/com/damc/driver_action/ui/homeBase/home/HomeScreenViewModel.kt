@@ -25,8 +25,7 @@ class HomeScreenViewModel(
     BaseViewModel() {
 
 
-    lateinit var tripsMetrics: TripMetrics
-    lateinit var trips: Trip
+
     var acceleration = MutableLiveData<Float>()
     var velocity = MutableLiveData<Float>()
     var lastSecondAcceleration = 0.0f
@@ -150,4 +149,6 @@ class HomeScreenViewModel(
     fun goToSummery() {
 //        navigate(HomeScreenDirections.homeToSummery())
     }
+
+
 }

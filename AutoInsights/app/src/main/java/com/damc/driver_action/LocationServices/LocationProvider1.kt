@@ -12,6 +12,7 @@ import com.damc.driver_action.LocationServices.GPSProcessor
 import com.damc.driver_action.app.AssignmentApplication
 import com.damc.driver_action.data.local.room.DatabaseClient
 import com.damc.driver_action.domain.models.Trip
+import com.damc.driver_action.domain.models.TripMetrics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -23,13 +24,9 @@ class LocationProvider1(private val context: Context, private val gpsProcessor: 
     private var isTripStarted = false
     suspend fun startNewTrip() {
         val application = context.applicationContext as AssignmentApplication
-        val currentTrip = application.getTrip()
-        val currentTripMetrics = application.getTripMetrics()
-        val databaseClient = DatabaseClient(context)
-        val appDatabase = databaseClient.getAppDatabase()
-        val onDataBaseActions = appDatabase?.OnDataBaseActions()
-        onDataBaseActions?.insertTrip(Trip(userId = userId ,date = Date())) // Set the date and time of the trip
-        currentTripId = onDataBaseActions?.getLatestTrip(userId)?.id  ?: 0
+        application.database.insertTrip(Trip(userId = userId ,date = Date())) // Set the date and time of the tri
+        currentTripId = application.database.getLatestTrip(userId).id // Get the id of the latest trip
+        application.database.insertTripMetrics(TripMetrics(userId, currentTripId, 0.0, 0.0, 0.0, 0.0, 0, 0, 0) )
     }
 
     private val locationManager: LocationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -40,7 +37,7 @@ class LocationProvider1(private val context: Context, private val gpsProcessor: 
             val currentTimeStamp = System.currentTimeMillis()
             val gpsPoint = GPSPoint(location.latitude, location.longitude, currentTimeStamp)
             gpsPoints.add(gpsPoint)
-            val SOME_THRESHOLD = 1000
+            val SOME_THRESHOLD = 10
             if (gpsPoints.size >= SOME_THRESHOLD) {
                 GlobalScope.launch {
                     if (!isTripStarted) {

@@ -18,8 +18,6 @@ import org.koin.core.context.startKoin
 class AssignmentApplication : Application() {
     private var loginUser: Users? = null
     private var actionData: ActionData? = null
-    private var trip: Trip? = null
-    private var tripMetrics: TripMetrics? = null
 
     lateinit var database: LocalRepostories
     lateinit var appDatabase: AppDataBase
@@ -60,19 +58,5 @@ class AssignmentApplication : Application() {
         return actionData!!
     }
 
-    fun setTrip(trip: Trip) {
-        this.trip = trip
-    }
 
-    fun getTrip(): Trip {
-        return trip!!
-    }
-
-    fun setTripMetrics(tripMetrics: TripMetrics) {
-        this.tripMetrics = tripMetrics
-    }
-
-    fun getTripMetrics(): TripMetrics {
-        return tripMetrics!!
-    }
 }
