@@ -29,6 +29,7 @@ import com.damc.driver_action.common.Constants
 import com.damc.driver_action.common.Constants.REQUEST_CODE_ACTIVITY_TRANSITION
 import com.damc.driver_action.data.local.room.DatabaseClient
 import com.damc.driver_action.databinding.FragmentHomeScreenBinding
+import com.damc.driver_action.domain.LocalRepostories
 import com.damc.driver_action.domain.models.Trip
 import com.damc.driver_action.domain.models.TripMetrics
 import com.damc.driver_action.domain.models.Users
@@ -105,6 +106,9 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         lifecycleScope.launch { // Launch a new coroutine in lifecycleScope
             val application = context?.applicationContext as AssignmentApplication
             val gpsProcessor = GPSProcessor(application.database)
+
+
+
         val userId = (requireActivity().application as AssignmentApplication).getLoginUser().userId
         locationProvider1 = LocationProvider1(requireContext(), gpsProcessor, userId)
         withContext(Dispatchers.Main) {
@@ -112,12 +116,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                 (requireActivity().application as AssignmentApplication).getLoginUser()
 
             viewModel.actionData =
-                (requireActivity().application as AssignmentApplication).getActionData()!!
-            viewModel.trips =
-                (requireActivity().application as AssignmentApplication).getTrip()!!
-            viewModel.tripsMetrics =
-                (requireActivity().application as AssignmentApplication).getTripMetrics()!!
-
+                (requireActivity().application as AssignmentApplication).getActionData()
         }
     }
         viewModel.topSpeed = viewModel.actionData.highestSpeed
@@ -213,6 +212,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
         }
     }
 
+
     fun handleAutoTracking(user: Users) {
         if (user.autoTrackingEnabled) {
             binding.btRider.visibility = View.GONE
@@ -227,8 +227,14 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
                         result?.let {
                             result.transitionEvents.forEach { event ->
                                 if (ActivityTransitionsUtil.toActivityString(event.activityType) == "In_Vehicle" && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
-                                    locationProvider1.startLocationUpdates()
+
+                                    lifecycleScope.launch {
+
+                                        // Start location updates
+                                        locationProvider1.startLocationUpdates()
+                                    }
                                 } else if (ActivityTransitionsUtil.toActivityString(event.activityType) == "In_Vehicle" && event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_EXIT) {
+                                    // Stop location updates
                                     locationProvider1.stopLocationUpdates()
                                 }
                             }
@@ -241,7 +247,7 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
             binding.llDriverData.visibility = View.GONE
             binding.tvUserStatus.text = "Waiting for service..."
 
-            // Stop location updates when auto trip detection is off
+            // Stop location updates
             locationProvider1.stopLocationUpdates()
         }
     }
@@ -470,18 +476,26 @@ class HomeScreen : BaseFragment<FragmentHomeScreenBinding, HomeScreenViewModel>(
 
     fun onClickSummery(view: View) {
         if (!viewModel.isStartRide) {
-            binding.llDriverData.visibility = View.VISIBLE
-            binding.btRider.text = "Stop Ride"
-            binding.tvUserStatus.text = "Driving"
+            val userId = (requireActivity().application as AssignmentApplication).getLoginUser().userId
+            val application = context?.applicationContext as AssignmentApplication
 
-            // Start location updates when the "Start Ride" button is pressed
-            locationProvider1.startLocationUpdates()
+            lifecycleScope.launch {
+                // Create a new Trip and TripMetrics instance
+                withContext(Dispatchers.Main) {
+                    binding.llDriverData.visibility = View.VISIBLE
+                    binding.btRider.text = "Stop Ride"
+                    binding.tvUserStatus.text = "Driving"
+                }
+
+                // Start location updates
+                locationProvider1.startLocationUpdates()
+            }
         } else {
             binding.llDriverData.visibility = View.GONE
             binding.btRider.text = "Start Ride"
             binding.tvUserStatus.text = "Waiting for service..."
 
-            // Stop location updates when the "End Trip" button is pressed
+            // Stop location updates
             locationProvider1.stopLocationUpdates()
         }
 

@@ -64,25 +64,8 @@ class LauncherViewModel(
             database.insertAction(actionData)
             application.setActionData(actionData)
 
-            val newTrip = Trip(
-                userId = user.userId,
-                date = Date()
-            )
-            database.insertTrip(newTrip)
-            application.setTrip(newTrip)
 
-            val newTripMetrics = TripMetrics(
-                userId = user.userId,
-                averageSpeed = 0.0,
-                maxSpeed = 0.0,
-                tripDistance = 0.0,
-                tripDuration = 0.0,
-                speedingInstances = 0,
-                hardAccelerationInstances = 0,
-                hardBrakingInstances = 0
-            )
-            database.insertTripMetrics(newTripMetrics)
-            application.setTripMetrics(newTripMetrics)
+
         }
 
         return@withContext user != null

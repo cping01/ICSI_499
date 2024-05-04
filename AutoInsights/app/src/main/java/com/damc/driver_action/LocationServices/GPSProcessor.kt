@@ -101,15 +101,6 @@ class GPSProcessor(private val database: LocalRepostories) {
     }
 
 
-    // Helper Function to calculate center (replace with your logic)
-    private fun calculateCenter(points: List<GPSPoint>): GPSPoint {
-        // can implement averaging or a more sophisticated centroid calculation here
-        val sumLat = points.sumOf { it.latitude }
-        val sumLon = points.sumOf { it.longitude }
-        val avgLat = sumLat / points.size
-        val avgLon = sumLon / points.size
-        return GPSPoint(avgLat, avgLon, points[0].timestamp) // Use timestamp from any point
-    }
 
     fun processGPSPoints(points: List<GPSPoint>): List<GPSPoint> {
         var lastInferenceTime = System.currentTimeMillis()
@@ -329,8 +320,7 @@ class GPSProcessor(private val database: LocalRepostories) {
         val tripMetrics = tripSummaryToTripMetrics(userId ,metrics)
 
         // Retrieve the current TripMetrics for the trip
-        val currentTripMetricsLiveData = database.getTripMetrics(tripId, userId)
-        val currentTripMetrics = currentTripMetricsLiveData?.firstOrNull()
+        val currentTripMetrics = database.getLatestTripMetrics(userId)
 
         if (currentTripMetrics == null) {
             // If the TripMetrics for the current trip doesn't exist, insert a new TripMetrics into the database
